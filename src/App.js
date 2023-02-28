@@ -1,25 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
+import './Styles/App.css';
+import 'material-icons/iconfont/material-icons.css';
 
-function App() {
+import { useState, useEffect, useLayoutEffect } from 'react';
+import { Outlet } from 'react-router-dom';
+import Navbar from './Components/Navbar';
+import Sidebar from './Components/Sidebar';
+import useTodoist from './Hooks/useTodoist';
+
+export default function App() {
+  const [toggle, setToggle] = useState(0)
+  const todoist = useTodoist()
+
+  useEffect( () => {
+    if (!todoist.synced) todoist.sync()
+  }, [todoist])
+
+  useLayoutEffect(() => {
+    document.addEventListener("visibilitychange", onVisibilityChange)
+    return () => document.removeEventListener("visibilitychange", onVisibilityChange)
+  })
+
+  const onVisibilityChange = () => {
+    if (document.visibilityState === 'visible') todoist.sync()
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+    <>
+      <Navbar
+        todoist={todoist}
+        toggleSidebar={()=>setToggle(n => n + 1)} />
 
-export default App;
+      <Sidebar 
+        toggle={toggle} />
+
+      <Outlet 
+        context={[todoist]} />
+    </>
+  )
+}

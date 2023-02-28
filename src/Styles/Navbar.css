@@ -1,0 +1,53 @@
+.navbar {
+    box-sizing: border-box;
+    height: 44px;
+    background-color: #3d3d3d;
+    color:lightgray;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    flex-shrink: 0;
+    border-bottom: 1px solid transparent;
+    padding-left: 28px;
+    padding-right: 28px;
+    position:fixed;
+    width:100vw;
+    flex:0 0 100vw;
+  }
+  
+  .navbar i {
+    cursor:pointer;
+    padding:10px;
+  }
+
+  .app-menu-icon {
+    position:absolute;
+  }
+  
+  .app-menu-icon:hover {
+    background: hsla(0,0%,100%,.2);
+    color:whitesmoke;
+  }
+
+  .right {
+    height:28px;
+    line-height:28px;
+    vertical-align: middle;
+    position:absolute;
+    right:42px;
+  }
+  
+  .avatar {
+    height:28px;
+    border-radius:15px;
+    cursor:pointer;
+  }
+
+  .small {
+    display:inline-block;
+    vertical-align:top;
+    font-size:x-small;
+    line-height:14px;
+    margin:0 15px;
+  }

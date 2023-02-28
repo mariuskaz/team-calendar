@@ -1,0 +1,33 @@
+.sidebar {
+    flex:0 0 200px;
+    margin-top:44px;
+    margin-left:0;
+    font-size:0.8em;
+    background-color: #fafafa;
+    padding:20px 40px;
+    height: calc(100vh - 44px);
+    width:200px;
+    transition: all .25s cubic-bezier(.4,0,.2,1);
+  }
+
+  .hidden {
+    margin-left:-280px;
+  }
+  
+  .sidebar-section {
+    color:black;
+    font-size:11pt;
+    line-height:1.5;
+    padding-top:10px;
+  }
+
+  a {
+    color: black;
+    text-decoration: none;
+  }
+  
+  p {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
