@@ -6,7 +6,7 @@ export default function Sidebar({ toggle }) {
   const [ hidden, setHidden ] = useState(false)
   const sidebar = useRef()
 
-  const small = window.innerWidth < 400 ? true : false
+  const small = window.innerWidth < 800 ? true : false
   const className = hidden ? 'sidebar hidden' : 'sidebar'
 
   useEffect(() => {

@@ -34,7 +34,7 @@ export default function DailyList({ date, items, url, toggle, sync, advanced }) 
         return <span className='calendar-label'>{items.length}</span>
     }
 
-    function CompletedBar() {
+    function TodayStatus() {
         if (advanced) {
             const title = translate['today']
             const max = items.length
@@ -49,7 +49,7 @@ export default function DailyList({ date, items, url, toggle, sync, advanced }) 
 
     return (
         <>
-            {today && <CompletedBar />}
+            {today && <TodayStatus />}
             <Day />
             <Weekday />
             <Line />

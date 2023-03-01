@@ -118,6 +118,23 @@ textarea {
 }
 
 
+
+
+.calendar {
+  color:#3c4043;
+  font-size:24px;
+  font-weight:400;
+  border-bottom:1px solid gainsboro;
+  position:sticky;
+  top:0;
+  width:100%;
+}
+
+.calendar-toolbox {
+  float:right;
+  display:flex;
+}
+
 .calendar-bold {
   color:#3c4043;
   margin-top:30px;
@@ -151,7 +168,32 @@ textarea {
   padding-top:30px;
 }
 
+.icon-button {
+  cursor:pointer;
+  color:#ccc;
+  font-size:18pt;
+  padding:1px;
+  margin:1px;
+  background:#fff;
+  border:1px solid gainsboro;
+  border-radius:3px;
+  user-select: none;
+  display:inline-block;
+}
 
+.text-button {
+  cursor:pointer;
+  margin:1px;
+  background:#fff;
+  border:1px solid gainsboro;
+  border-radius:3px;
+  user-select: none;
+  display:inline-block;
+  font-size: 10pt;
+  padding:5px 10px;
+  margin-left: 2px;
+  color:gray;
+}
 
 .inline-button {
   color:gray;
@@ -199,4 +241,23 @@ progress::-webkit-progress-value {
 
 .progress-bar span {
   text-transform:uppercase;
+}
+
+@media (hover: hover) {
+  p:hover {
+    color:red;
+  }
+  .icon-button:hover, .text-button:hover {
+    background:whitesmoke;
+    color:gray;
+  } 
+}
+
+@media screen and (max-device-width: 800px) {
+  .main {
+    padding: 0px 10px 150px;
+  }
+  .content {
+    width:100%;
+  }
 }
