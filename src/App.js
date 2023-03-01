@@ -1,5 +1,5 @@
-import './Styles/App.css';
 import 'material-icons/iconfont/material-icons.css';
+import './Styles/App.css';
 
 import { useState, useEffect, useLayoutEffect } from 'react';
 import { Outlet } from 'react-router-dom';
@@ -20,7 +20,7 @@ export default function App() {
     return () => document.removeEventListener("visibilitychange", onVisibilityChange)
   })
 
-  const onVisibilityChange = () => {
+  function onVisibilityChange() {
     if (document.visibilityState === 'visible') todoist.sync()
   }
 
@@ -33,8 +33,9 @@ export default function App() {
       <Sidebar 
         toggle={toggle} />
 
-      <Outlet 
-        context={[todoist]} />
+      <div className='main'>
+        <Outlet context={[todoist]} />
+      </div>
     </>
   )
 }

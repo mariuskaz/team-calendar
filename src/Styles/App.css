@@ -14,6 +14,13 @@ html, body {
   opacity: 1;
 }
 
+textarea {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  width:100%;
+}
+
 #root {
   height:100vh;
   max-height:100vh;
@@ -29,11 +36,23 @@ html, body {
   padding-top: 3px;
 }
 
-.content {
-  display: flex;
+.main {
+  display: inline-flex;
+  max-height: calc(100vh - 44px);
+  width: calc(100vw - 280px);
+  align-items:flex-start;
   justify-content: center;
   margin-top:44px;
+  min-height: 50vh;
+  overflow-y:auto;
+  flex:auto;
+  min-width:300px;
+  padding-bottom:200px;
+}
+
+.content {
   width:100%;
+  max-width:800px;
 }
 
 .button {
@@ -62,4 +81,122 @@ html, body {
 .button-dark-theme:hover {
   background:#303030;
   color:white;
+}
+
+.section {
+  font-size:0.8em;
+  font-weight:bold;
+  padding-top:70px;
+}
+
+.section span {
+  font-size:small;
+  font-weight: normal;
+  color:gray;
+  margin-left:10px;
+}
+
+.line {
+  height:15px;
+  border-bottom:1px solid gainsboro;
+}
+
+.header {
+  position:fixed;
+  background:white;
+  width:800px;
+  padding:20px 0;
+  font-size:1.1em;
+  font-weight:bold;
+}
+
+.header span {
+  color:gray;
+  font-size:0.7em;
+  font-weight:normal;
+  margin-left:10px;
+}
+
+
+.calendar-bold {
+  color:#3c4043;
+  margin-top:30px;
+  margin-bottom:0; 
+  margin-left:5px;
+  font-size:xx-large;
+  font-weight:600;
+  line-height:32px;
+}
+
+.calendar-normal {
+  color:gray;
+  margin-top:2px;
+  margin-bottom:0px; 
+  margin-left:5px; 
+  font-size:small;
+}
+
+.calendar-label { 
+  margin-right:5px; 
+  padding:2px 8px;
+  color:dimgray;
+  background:whitesmoke;
+  float:right;
+  font-size:small; 
+  font-weight:bold;
+  margin-top:14px;
+}
+
+.space {
+  padding-top:30px;
+}
+
+
+
+.inline-button {
+  color:gray;
+  font-size:0.9em;
+  padding-left:2px;
+}
+
+.inline-button:hover {
+  color:black
+}
+
+.input-box {
+  margin:0px;
+  margin-top:15px;
+  border: 1px solid lightgray;
+  border-radius:6px;
+  outline: none;
+  font: 0.9em Calibri;
+}
+
+
+
+progress {
+  height:2px;
+  width:100%;
+  border:none;
+}
+
+/* For Chrome or Safari */
+progress::-webkit-progress-bar {
+  background-color: #eeeeee;
+}
+
+progress::-webkit-progress-value {
+  background-color: #2ad!important;
+}
+
+.progress-bar {
+  font-weight:500; 
+  font-size:10pt; 
+  margin:30px 5px 0px;
+  color:gray;
+  line-height:1;
+}
+
+.progress-bar span {
+  text-transform:uppercase;
 }

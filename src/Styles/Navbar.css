@@ -51,3 +51,16 @@
     line-height:14px;
     margin:0 15px;
   }
+
+  
+  @media screen and (max-device-width: 400px) {
+
+    .navbar {
+      padding:0;
+    }
+  
+    .right {
+      right:10px;
+    }
+
+  }

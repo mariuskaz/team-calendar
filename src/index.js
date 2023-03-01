@@ -14,7 +14,6 @@ import Today from './Components/Today';
 import Calendar from './Components/Calendar';
 import Unscheduled from './Components/Unscheduled';
 
-
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <Router>
