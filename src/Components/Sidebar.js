@@ -6,16 +6,17 @@ export default function Sidebar({ toggle, todoist }) {
   const [ hidden, setHidden ] = useState(false)
   const sidebar = useRef()
 
-  const small = window.innerWidth < 800 ? true : false
+  const small = window.innerWidth < 800
+  const portrait = window.innerWidth < window.innerHeight
   const className = hidden ? 'sidebar hidden' : 'sidebar'
 
   useEffect(() => {
-    if (small) setHidden(true)
+    if (small || portrait) setHidden(true)
     if (toggle > 0) setHidden(b => !b)
-  }, [toggle, small]);
+  }, [toggle, small, portrait]);
 
   function handleSidebar() {
-    if (small && !hidden) setHidden(true)
+    if (small || portrait) setHidden(true)
   }
   
   return (

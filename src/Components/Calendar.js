@@ -1,11 +1,9 @@
 import { useOutletContext } from "react-router-dom"
-import { useState } from 'react'
 import DailyList from './DailyList'
 import QuickTodo from './QuickTodo'
 
 export default function Calendar() {
-    const [todoist] = useOutletContext()
-    const [ week, setWeek ] = useState(0)
+    const [todoist, week, setWeek] = useOutletContext()
     const day = new Date().getDay()
     const start = week - day + 1
     const range = week + 7 - day + 1
@@ -38,8 +36,8 @@ export default function Calendar() {
 
     }
 
-    return (
-      <div className='content'>
+    function CalendarHeader() {
+      return (
         <div className='header calendar'>
           <div className='calendar-toolbox'>
             <i className="material-icons icon-button" onClick={() => setWeek(w => w - 7)}>chevron_left</i>
@@ -48,6 +46,12 @@ export default function Calendar() {
           </div>
           {year} {month} 
         </div>
+      )
+    }
+
+    return (
+      <div className='content'>
+        <CalendarHeader />
         {
           calendar.map(item => {
             return (

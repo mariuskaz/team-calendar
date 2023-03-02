@@ -36,7 +36,7 @@ textarea {
   padding-top: 3px;
 }
 
-.main {
+main {
   display: inline-flex;
   max-height: calc(100vh - 44px);
   width: calc(100vw - 280px);
@@ -253,11 +253,17 @@ progress::-webkit-progress-value {
   } 
 }
 
-@media screen and (max-device-width: 800px) {
-  .main {
+@media screen and (max-width: 800px) {
+  main {
     padding: 0px 10px 150px;
   }
   .content {
     width:100%;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  main {
+    padding: 0px 50px 150px;
   }
 }

@@ -54,7 +54,7 @@
   }
 }
 
-@media screen and (max-device-width: 800px) {
+@media screen and (max-width: 768px) {
   .navbar {
     padding:0;
   }
