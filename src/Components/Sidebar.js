@@ -27,7 +27,6 @@ export default function Sidebar({ toggle, todoist }) {
       <NavLink to="/unscheduled"><p><i className="material-icons">inbox</i>Not scheduled</p></NavLink>
       <div className='sidebar-section' />
       <div className='sidebar-section'>My Team</div>
-      {todoist.userName && <NavLink to="/calendar"><p><i className="material-icons">account_circle</i>{todoist.userName}</p></NavLink>}
       {todoist.userName && <NavLink to="/calendar" className="active"><p><i className="material-icons">account_circle</i>{todoist.userName}</p></NavLink>}
     </div>
   )
