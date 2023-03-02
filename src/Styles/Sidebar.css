@@ -19,6 +19,8 @@
     font-size:11pt;
     line-height:1.5;
     padding-top:10px;
+    padding-left:4px;
+    margin-bottom:12px;
   }
 
   a {
@@ -30,4 +32,18 @@
     display: flex;
     align-items: center;
     cursor: pointer;
+    padding:1px 4px 2px;
+    border-radius:2px;
+    margin:7px 0;
+  }
+
+  .active p {
+    background:#eee;
+    color:black;
+  }
+
+  @media (hover: hover) {
+    .sidebar p:hover {
+      background:#eee;
+    }
   }

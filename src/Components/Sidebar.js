@@ -1,5 +1,5 @@
 import '../Styles/Sidebar.css'
-import { Link } from "react-router-dom"
+import { NavLink } from "react-router-dom"
 import { useRef, useEffect, useState } from 'react'
 
 export default function Sidebar({ toggle, todoist }) {
@@ -22,12 +22,12 @@ export default function Sidebar({ toggle, todoist }) {
   return (
     <div className={className} ref={sidebar} onClick={handleSidebar} >
       <div className='sidebar-section'>Calendar</div>
-      <Link to="/today"><p><i className="material-icons">event</i>Today</p></Link>
-      <Link to="/calendar"><p><i className="material-icons">calendar_month</i>Calendar</p></Link>
-      <Link to="/unscheduled"><p><i className="material-icons">inbox</i>Not scheduled</p></Link>
+      <NavLink to="/today"><p><i className="material-icons">event</i>Today</p></NavLink>
+      <NavLink to="/calendar"><p><i className="material-icons">calendar_month</i>Calendar</p></NavLink>
+      <NavLink to="/unscheduled"><p><i className="material-icons">inbox</i>Not scheduled</p></NavLink>
       <div className='sidebar-section' />
       <div className='sidebar-section'>My Team</div>
-      <Link to="/calendar"><p><i className="material-icons">account_circle</i>{todoist.userName}</p></Link>
+      {todoist.userName && <NavLink to="/calendar"><p><i className="material-icons">account_circle</i>{todoist.userName}</p></NavLink>}
     </div>
   )
 }
