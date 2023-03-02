@@ -244,9 +244,6 @@ progress::-webkit-progress-value {
 }
 
 @media (hover: hover) {
-  p:hover {
-    color:red;
-  }
   .icon-button:hover, .text-button:hover {
     background:whitesmoke;
     color:gray;
