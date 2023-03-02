@@ -2,7 +2,7 @@ import '../Styles/Sidebar.css'
 import { Link } from "react-router-dom"
 import { useRef, useEffect, useState } from 'react'
 
-export default function Sidebar({ toggle }) {
+export default function Sidebar({ toggle, todoist }) {
   const [ hidden, setHidden ] = useState(false)
   const sidebar = useRef()
 
@@ -26,7 +26,7 @@ export default function Sidebar({ toggle }) {
       <Link to="/unscheduled"><p><i className="material-icons">inbox</i>Not scheduled</p></Link>
       <div className='sidebar-section' />
       <div className='sidebar-section'>My Team</div>
-      <Link to="/calendar"><p><i className="material-icons">account_circle</i>Person</p></Link>
+      <Link to="/calendar"><p><i className="material-icons">account_circle</i>{todoist.userName}</p></Link>
     </div>
   )
 }

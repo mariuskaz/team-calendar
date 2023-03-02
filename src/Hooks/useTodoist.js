@@ -10,6 +10,7 @@ export default function useTodoist() {
              return JSON.parse(localStorage['todoist.tasks'])
         return []
     })
+    const [userName, setUserName] = useState()
     const [avatar, setAvatar] = useState()
     const navigate = useNavigate()
     const url = 'https://todoist.com'
@@ -72,6 +73,7 @@ export default function useTodoist() {
                             .sort((a, b) => a.due && b.due && a.due.date > b.due.date ? 1 : -1)
             
                         setTasks(items)
+                        setUserName(data.user.full_name || "unknown")
                         setAvatar(data.user.avatar_medium || "avatar.png")
 
                         localStorage.setItem("todoist.tasks", JSON.stringify(items))
@@ -95,6 +97,6 @@ export default function useTodoist() {
       }, [synced, token, navigate])
 
 
-    return { url, synced, status, tasks, avatar, sync, toggle, push }
+    return { url, synced, status, tasks, userName, avatar, sync, toggle, push }
 
 }

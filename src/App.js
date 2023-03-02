@@ -31,7 +31,8 @@ export default function App() {
         toggleSidebar={()=>setToggle(n => n + 1)} />
 
       <Sidebar 
-        toggle={toggle} />
+        toggle={toggle} 
+        todoist={todoist} />
 
       <div className='main'>
         <Outlet context={[todoist]} />
