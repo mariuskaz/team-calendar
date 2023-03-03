@@ -35,7 +35,7 @@ export default function Sidebar({ toggle, todoist }) {
 
     return (
       <Link className={active} to={link}>
-        <p><i className="material-icons-outlined">person</i>{name}</p>
+        <p className='sidebar-item'><i className="material-icons-outlined">person</i>{name}</p>
       </Link>
     )
   }
@@ -43,9 +43,9 @@ export default function Sidebar({ toggle, todoist }) {
   return (
     <div className={className} ref={sidebar} onClick={handleSidebar} >
       <div className='sidebar-section'>Calendar</div>
-      <NavLink to="/today"><p><i className="material-icons-outlined">event</i>Today</p></NavLink>
-      <NavLink to="/calendar"><p><i className="material-icons-outlined">calendar_month</i>Calendar</p></NavLink>
-      <NavLink to="/unscheduled"><p><i className="material-icons-outlined">inbox</i>Not scheduled</p></NavLink>
+      <NavLink to="/today"><p className='sidebar-item'><i className="material-icons-outlined">event</i>Today</p></NavLink>
+      <NavLink to="/calendar"><p className='sidebar-item'><i className="material-icons-outlined">calendar_month</i>Calendar</p></NavLink>
+      <NavLink to="/unscheduled"><p className='sidebar-item'><i className="material-icons-outlined">inbox</i>Not scheduled</p></NavLink>
       <div className='sidebar-section' />
       <div className='sidebar-section'>My Team</div>
       {todoist.team.slice(0, 8).map(user => <User key={user.id} id={user.id} name={user.full_name} />)}
