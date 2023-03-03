@@ -11,6 +11,7 @@
   border-bottom: 1px solid transparent;
   padding-left: 28px;
   padding-right: 28px;
+  padding:0;
   position:fixed;
   width:100vw;
   flex:0 0 100vw;
@@ -18,7 +19,7 @@
 
 .navbar i {
   cursor:pointer;
-  padding:10px;
+  padding:10px 15px;
 }
 
 .app-menu-icon {
@@ -31,6 +32,7 @@
   vertical-align: middle;
   position:absolute;
   right:42px;
+  right:25px;
 }
 
 .avatar {
@@ -55,10 +57,9 @@
 }
 
 @media screen and (max-width: 768px) {
-  .navbar {
-    padding:0;
+  .navbar i {
+    padding:10px;
   }
-
   .right {
     right:10px;
   }

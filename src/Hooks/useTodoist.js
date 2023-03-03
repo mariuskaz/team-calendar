@@ -10,8 +10,8 @@ export default function useTodoist() {
              return JSON.parse(localStorage['todoist.tasks'])
         return []
     })
-    const [userName, setUserName] = useState()
-    const [avatar, setAvatar] = useState()
+    const [user, setUser] = useState({})
+    const [team, setTeam] = useState([])
     const navigate = useNavigate()
     const url = 'https://todoist.com'
 
@@ -47,7 +47,7 @@ export default function useTodoist() {
         
                 params = {
                     sync_token: '*',
-                    resource_types: ["user","items","projects"]
+                    resource_types: ["user","items","projects","collaborators"]
                 }
         
                 console.log("syncing...")
@@ -66,17 +66,36 @@ export default function useTodoist() {
             
                         let  projects = {}
                         data.projects.forEach( project => projects[project.id] = project.name )
-            
+
                         const items = data.items
-                            .filter(item => item.responsible_uid === data.user.id || item.project_id === data.user.inbox_project_id)
-                            .map(task => { return { id:task.id, checked:task.priority === 2, content:task.content, due:task.due, priority:task.priority, project: { id:task.project_id, name:projects[task.project_id] } }})
+                            .map(task => { 
+                                return { 
+                                    id: task.id, 
+                                    checked: task.priority === 2, 
+                                    content: task.content, 
+                                    due: task.due, 
+                                    priority: task.priority,
+                                    responsibleId: task.responsible_uid, 
+                                    project: { 
+                                        id: task.project_id, 
+                                        name: projects[task.project_id] 
+                                    } 
+                                }
+                            })
                             .sort((a, b) => a.due && b.due && a.due.date > b.due.date ? 1 : -1)
             
-                        setTasks(items)
-                        setUserName(data.user.full_name || "unknown")
-                        setAvatar(data.user.avatar_medium || "avatar.png")
+                        setUser({
+                            id: data.user.id, 
+                            name: data.user.full_name, 
+                            avatar: data.user.avatar_medium,
+                            inboxId: data.user.inbox_project_id
+                        })
 
-                        localStorage.setItem("todoist.tasks", JSON.stringify(items))
+                        setTasks(items)
+                        setTeam([...data.collaborators])
+
+                        const tasks = items.filter(item => item.responsibleId === data.user.id || item.project.id === data.user.inbox_project_id)
+                        localStorage.setItem("todoist.tasks", JSON.stringify(tasks))
 
                         console.log('items:', items.length)
                         setSynced(true)
@@ -97,6 +116,6 @@ export default function useTodoist() {
       }, [synced, token, navigate])
 
 
-    return { url, synced, status, tasks, userName, avatar, sync, toggle, push }
+    return { url, user, synced, status, tasks, team, sync, toggle, push }
 
 }

@@ -1,9 +1,12 @@
-import { useOutletContext } from "react-router-dom"
+import { useOutletContext, useSearchParams } from "react-router-dom"
 import DailyList from './DailyList'
 import QuickTodo from './QuickTodo'
 
 export default function Calendar() {
     const [todoist, week, setWeek] = useOutletContext()
+    const [searchParams] = useSearchParams()
+    const userId = searchParams.get('user') || todoist.user.id
+
     const day = new Date().getDay()
     const start = week - day + 1
     const range = week + 7 - day + 1
@@ -14,6 +17,10 @@ export default function Calendar() {
     const year = startDay.getFullYear()
     const month = startDay.toLocaleString("default", { month: 'long' })
 
+    const userTasks = todoist.tasks
+    .filter(item => item.responsibleId === userId || 
+      ( userId === todoist.user.id && item.project.id === todoist.user.inboxId) )
+
     let calendar = []
 
     for (let d = start; d < range; d++) {
@@ -23,7 +30,7 @@ export default function Calendar() {
       today = d === 0 ? true : false,
       color = d < 0 ? 'red' : 'green',
       
-      tasks = todoist.tasks
+      tasks = userTasks
         .filter( item => item.due && new Date(item.due.date) >= startDate && new Date(item.due.date) < endDate )
         .reverse(),
 

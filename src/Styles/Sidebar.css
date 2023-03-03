@@ -1,49 +1,48 @@
 .sidebar {
-    flex:0 0 200px;
-    margin-top:44px;
-    margin-left:0;
-    font-size:0.8em;
-    background-color: #fafafa;
-    padding:20px 40px;
-    height: calc(100vh - 44px);
-    width:200px;
-    transition: all .25s cubic-bezier(.4,0,.2,1);
-  }
+  flex:0 0 200px;
+  margin-top:44px;
+  margin-left:0;
+  font-size:0.8em;
+  background-color: #fafafa;
+  padding:20px 30px;
+  height: calc(100vh - 44px);
+  width:200px;
+  transition: all .25s cubic-bezier(.4,0,.2,1);
+}
 
-  .hidden {
-    margin-left:-280px;
-  }
-  
-  .sidebar-section {
-    color:black;
-    font-size:11pt;
-    line-height:1.5;
-    padding-top:10px;
-    padding-left:4px;
-    margin-bottom:12px;
-  }
+.hidden {
+  margin-left:-260px;
+}
 
-  a {
-    color: black;
-    text-decoration: none;
-  }
-  
-  p {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    padding:1px 4px 2px;
-    border-radius:2px;
-    margin:7px 0;
-  }
+.sidebar-section {
+  color:black;
+  font-size:11pt;
+  line-height:1.5;
+  padding:10px 2px;
+}
 
-  .active p {
+a {
+  color: black;
+  text-decoration: none;
+}
+
+sidebar p {
+  padding:4px 10px;
+  border-radius:4px;
+  margin:1px 0;
+}
+
+.active p {
+  background:#eee;
+  color:black;
+}
+
+.active .material-icons-outlined {
+  color:#2ad;
+}
+
+@media (hover: hover) {
+  .sidebar p:hover {
     background:#eee;
-    color:black;
   }
-
-  @media (hover: hover) {
-    .sidebar p:hover {
-      background:#eee;
-    }
-  }
+}

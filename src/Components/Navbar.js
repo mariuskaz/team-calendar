@@ -10,7 +10,7 @@ export default function Navbar({ toggleSidebar, todoist }) {
         {!todoist.synced && <div className='dot-pulse'/>}
         <div className='right'>
           {todoist.synced && <div className='small'>Last sync<br/><b>{ new Date().toLocaleTimeString() }</b></div>}
-          {todoist.avatar && <img className='avatar' alt='avatar' src={todoist.avatar} onClick={()=>navigate('/connect')} />}
+          {todoist.user.avatar && <img className='avatar' alt='avatar' src={todoist.user.avatar} onClick={()=>navigate('/connect')} />}
         </div>
       </div>
   )

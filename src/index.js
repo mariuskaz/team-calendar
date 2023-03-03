@@ -20,9 +20,9 @@ root.render(
     <Routes>
       <Route path="/" element={<App />} >
         <Route path="/"  element={<Navigate replace to="/today"/>} />
-        <Route path="/today" element={<Today />} />
-        <Route path="/calendar" element={<Calendar />} />
-        <Route path="/unscheduled" element={<Unscheduled />} />
+        <Route path="/today/*" element={<Today />} />
+        <Route path="/calendar/*" element={<Calendar />} />
+        <Route path="/unscheduled/*" element={<Unscheduled />} />
       </Route>    
       <Route path="/connect" element={<Connect />} />
     </Routes>

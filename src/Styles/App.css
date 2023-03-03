@@ -29,7 +29,7 @@ textarea {
   width:100%;
 }
 
-.material-icons {
+.material-icons, .material-icons-outlined {
   color: gray;
   font-size: 1.6em;
   margin-right: 10px;
@@ -195,6 +195,14 @@ main {
   color:gray;
 }
 
+p {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding:1px 4px 2px;
+  margin:7px 0;
+}
+
 .inline-button {
   color:gray;
   font-size:0.9em;
@@ -213,6 +221,7 @@ main {
   outline: none;
   font: 0.9em Calibri;
 }
+
 
 
 
