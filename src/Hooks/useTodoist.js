@@ -1,17 +1,24 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 export default function useTodoist() {
     const [synced, setSynced] = useState(false)
     const [token] = useState(() => localStorage['todoist.token'])
     const [status] = useState("Loading")
-    const [tasks, setTasks] = useState(() => {
-        if (localStorage['todoist.tasks']) 
-             return JSON.parse(localStorage['todoist.tasks'])
+
+    const [items, setItems] = useState(() => {
+        if (localStorage['todoist.items']) 
+             return JSON.parse(localStorage['todoist.items'])
         return []
     })
+
+    const [tasks, setTasks] = useState([])
     const [user, setUser] = useState({})
     const [team, setTeam] = useState([])
+
+    const [searchParams] = useSearchParams()
+    const userId = searchParams.get('user') || user.id || localStorage["todoist.id"]
+
     const navigate = useNavigate()
     const url = 'https://todoist.com'
 
@@ -61,13 +68,15 @@ export default function useTodoist() {
             
                 .then(res => {
                     res.json().then(data => {
-                        if (!localStorage["todoist.token"]) 
+                        if (!localStorage["todoist.token"]) {
                             localStorage.setItem("todoist.token", token)
+                            localStorage.setItem("todoist.id", data.user.id)
+                        }
             
                         let  projects = {}
                         data.projects.forEach( project => projects[project.id] = project.name )
 
-                        const items = data.items
+                        const todos = data.items
                             .map(task => { 
                                 return { 
                                     id: task.id, 
@@ -75,7 +84,8 @@ export default function useTodoist() {
                                     content: task.content, 
                                     due: task.due, 
                                     priority: task.priority,
-                                    responsibleId: task.responsible_uid, 
+                                    responsibleId: task.project_id === data.user.inbox_project_id ? 
+                                        data.user.id : task.responsible_uid,
                                     project: { 
                                         id: task.project_id, 
                                         name: projects[task.project_id] 
@@ -91,14 +101,13 @@ export default function useTodoist() {
                             inboxId: data.user.inbox_project_id
                         })
 
-                        setTasks(items)
-                        setTeam([...data.collaborators])
+                        setItems(todos)
+                        localStorage.setItem("todoist.items", JSON.stringify(todos))
+                        console.log('items:', todos.length)
 
-                        const tasks = items.filter(item => item.responsibleId === data.user.id || item.project.id === data.user.inbox_project_id)
-                        localStorage.setItem("todoist.tasks", JSON.stringify(tasks))
-
-                        console.log('items:', items.length)
+                        setTeam(data.collaborators)
                         setSynced(true)
+
                     })
                 })
         
@@ -113,9 +122,12 @@ export default function useTodoist() {
         if (!synced) fetchTodoist()
       
         return () => controller.abort()
-      }, [synced, token, navigate])
+    }, [synced, token, navigate])
 
-
+    useEffect(() => {
+        setTasks(items.filter(item => item.responsibleId === userId))
+    }, [userId, items])
+    
     return { url, user, synced, status, tasks, team, sync, toggle, push }
 
 }
