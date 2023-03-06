@@ -68,10 +68,8 @@ export default function useTodoist() {
             
                 .then(res => {
                     res.json().then(data => {
-                        if (!localStorage["todoist.token"]) {
+                        if (!localStorage["todoist.token"])
                             localStorage.setItem("todoist.token", token)
-                            localStorage.setItem("todoist.id", data.user.id)
-                        }
             
                         let  projects = {}
                         data.projects.forEach( project => projects[project.id] = project.name )
@@ -102,8 +100,10 @@ export default function useTodoist() {
                         })
 
                         setItems(todos)
-                        localStorage.setItem("todoist.items", JSON.stringify(todos))
                         console.log('items:', todos.length)
+                        
+                        localStorage.setItem("todoist.id", data.user.id)
+                        localStorage.setItem("todoist.items", JSON.stringify(todos))
 
                         setTeam(data.collaborators)
                         setSynced(true)
