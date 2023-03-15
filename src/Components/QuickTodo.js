@@ -14,7 +14,7 @@ function QuickTodo({ due, sync }) {
 
   function pushTask() {
     let task = { content: input.current.value, due_string: due || "" },
-    token = localStorage["todoist.token"] || "none",
+    token = localStorage["token"] || "none",
     headers = {
         'Authorization': 'Bearer ' + token,
         'Content-Type': 'application/json'
