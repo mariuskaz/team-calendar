@@ -10,7 +10,7 @@ export default function Sidebar({ toggle, todoist }) {
 
   const location = useLocation()
   const url = location.pathname
-  const userId = searchParams.get('user') || 'none'
+  const userId = searchParams.get('uid') || 'none'
 
   const small = window.innerWidth < 800
   const portrait = window.innerWidth < window.innerHeight
@@ -29,8 +29,8 @@ export default function Sidebar({ toggle, todoist }) {
   }
 
   function User({ id, name }) {
-    const link = `${url}?user=${id}`
-    const currentUser = userId === 'none' && id === todoist.user.id
+    const link = `${url}?uid=${id}`
+    const currentUser = userId === 'none' && id === todoist.users[0]?.id
     const active = userId === id || currentUser  ? 'active' : ''
 
     return (
@@ -39,16 +39,20 @@ export default function Sidebar({ toggle, todoist }) {
       </Link>
     )
   }
+
+  const today = userId !== 'none' ? `/today?uid=${userId}` : '/today'
+  const calendar = userId !== 'none' ? `/calendar?uid=${userId}` : '/calendar'
+  const unscheduled = userId !== 'none' ? `/unscheduled?uid=${userId}` : '/unscheduled'
   
   return (
     <div className={className} ref={sidebar} onClick={handleSidebar} >
       <div className='sidebar-section'>Calendar</div>
-      <NavLink to="/today"><p className='sidebar-item'><i className="material-icons-outlined">event</i>Today</p></NavLink>
-      <NavLink to="/calendar"><p className='sidebar-item'><i className="material-icons-outlined">calendar_month</i>Calendar</p></NavLink>
-      <NavLink to="/unscheduled"><p className='sidebar-item'><i className="material-icons-outlined">inbox</i>Not scheduled</p></NavLink>
+      <NavLink to={today}><p className='sidebar-item'><i className="material-icons-outlined">event</i>Today</p></NavLink>
+      <NavLink to={calendar}><p className='sidebar-item'><i className="material-icons-outlined">calendar_month</i>Calendar</p></NavLink>
+      <NavLink to={unscheduled}><p className='sidebar-item'><i className="material-icons-outlined">inbox</i>Not scheduled</p></NavLink>
       <div className='sidebar-section' />
       <div className='sidebar-section'>My Team</div>
-      {todoist.team.slice(1, 8).map(user => <User key={user.id} id={user.id} name={user.full_name} />)}
+      {todoist.users.map(user => <User key={user.id} id={user.id} name={user.name} />)}
     </div>
   )
 }

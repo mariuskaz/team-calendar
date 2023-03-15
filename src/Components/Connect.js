@@ -7,7 +7,7 @@ export default function Connect() {
 	const navigate = useNavigate()
 
 	function connect() {
-		localStorage.setItem("todoist.token", input.current.value)
+		localStorage.setItem("token", input.current.value)
 		navigate('/today')
 	}
 
@@ -21,7 +21,7 @@ export default function Connect() {
 				<input style={{margin:'10px 0px', padding:'8px 5px', width:'300px', outline:'none', border:'1px solid lightgray'}} type="text" ref={input} /><br/>
 				<div className="button button-dark-theme" onClick={connect}>Connect</div>
         		<div className="button">Cancel</div>
-				<div style={{margin:'60px 0', padding:'10px', fontSize:'9pt', background:'whitesmoke'}}>Get your token from <a style={{color:'DeepSkyBlue'}} href='https://todoist.com/app/settings/integrations'>Todoist integrations</a></div>
+				<div style={{margin:'60px 0', padding:'10px', fontSize:'9pt', background:'whitesmoke'}}>Get your token from <a style={{color:'DeepSkyBlue'}} href='https://todoist.com/app/settings/integrations/developer' target='_blank' rel="noreferrer">Todoist integrations</a></div>
 			</div>
     	</div>
   	)

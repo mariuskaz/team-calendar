@@ -54,7 +54,7 @@ export default function Todo({ todo, color, open, browse, toggle, sync }) {
 
     function update() {
 
-        let token = localStorage["todoist.token"] || "",
+        let token = localStorage["token"] || "",
         headers = {
             'Authorization': 'Bearer ' + token,
             'Content-Type': 'application/json'

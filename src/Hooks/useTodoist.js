@@ -3,21 +3,25 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 export default function useTodoist() {
     const [synced, setSynced] = useState(false)
-    const [token] = useState(() => localStorage['todoist.token'])
-    const [status] = useState("Loading")
+    const [token] = useState(() => localStorage['token'])
 
     const [items, setItems] = useState(() => {
-        if (localStorage['todoist.items']) 
-             return JSON.parse(localStorage['todoist.items'])
+        if (localStorage['items']) 
+             return JSON.parse(localStorage['items'])
+        return []
+    })
+
+    const [users, setUsers] = useState(() => {
+        if (localStorage['users']) 
+             return JSON.parse(localStorage['users'])
         return []
     })
 
     const [tasks, setTasks] = useState([])
     const [user, setUser] = useState({})
-    const [team, setTeam] = useState([])
 
     const [searchParams] = useSearchParams()
-    const userId = searchParams.get('user') || user.id || localStorage["todoist.id"]
+    const userId = searchParams.get('uid') || users[0]?.id
 
     const navigate = useNavigate()
     const url = 'https://todoist.com'
@@ -27,7 +31,7 @@ export default function useTodoist() {
     }
 
     function toggle(todoId) {
-        setTasks(todos => todos.map(todo => todo.id === todoId ? {...todo, checked:!todo.checked} : todo))
+        setItems(todos => todos.map(todo => todo.id === todoId ? {...todo, checked:!todo.checked} : todo))
     }
 
     function push(todo="task", due="") {
@@ -68,46 +72,45 @@ export default function useTodoist() {
             
                 .then(res => {
                     res.json().then(data => {
-                        if (!localStorage["todoist.token"])
-                            localStorage.setItem("todoist.token", token)
-            
-                        let  projects = {}
-                        data.projects.forEach( project => projects[project.id] = project.name )
 
-                        const todos = data.items
-                            .map(task => { 
-                                return { 
-                                    id: task.id, 
-                                    checked: task.priority === 2, 
-                                    content: task.content, 
-                                    due: task.due, 
-                                    priority: task.priority,
-                                    responsibleId: task.project_id === data.user.inbox_project_id ? 
-                                        data.user.id : task.responsible_uid,
-                                    project: { 
-                                        id: task.project_id, 
-                                        name: projects[task.project_id] 
-                                    } 
-                                }
-                            })
-                            .sort((a, b) => a.due && b.due && a.due.date > b.due.date ? 1 : -1)
-            
                         setUser({
                             id: data.user.id, 
                             name: data.user.full_name, 
                             avatar: data.user.avatar_medium,
                             inboxId: data.user.inbox_project_id
                         })
+            
+                        let projects = {}
+                        data.projects.forEach( project => projects[project.id] = project.name )
+
+                        const todos = data.items
+                        .map(task => { 
+                            return { 
+                                id: task.id, 
+                                checked: task.priority === 2, 
+                                content: task.content, 
+                                due: task.due, 
+                                priority: task.priority,
+                                responsibleId: task.project_id === data.user.inbox_project_id ? 
+                                    data.user.id : task.responsible_uid,
+                                project: { 
+                                    id: task.project_id, 
+                                    name: projects[task.project_id] 
+                                } 
+                            }
+                        })
 
                         setItems(todos)
                         console.log('items:', todos.length)
-                        
-                        localStorage.setItem("todoist.id", data.user.id)
-                        localStorage.setItem("todoist.items", JSON.stringify(todos))
 
-                        setTeam(data.collaborators)
+                        let users = []
+                        users.push({ id: data.user.id, name: data.user.full_name})
+                        data.collaborators.forEach(user => {
+                            if (user.id !== data.user.id) users.push({id: user.id, name: user.full_name})
+                        })
+
+                        setUsers(users.slice(0, 8))
                         setSynced(true)
-
                     })
                 })
         
@@ -125,9 +128,20 @@ export default function useTodoist() {
     }, [synced, token, navigate])
 
     useEffect(() => {
-        setTasks(items.filter(item => item.responsibleId === userId))
+        setTasks(items
+            .filter(item => item.responsibleId === userId)
+            .sort((a, b) => a.due && b.due && a.due.date > b.due.date ? 1 : -1)
+        )
     }, [userId, items])
+
+    useEffect(()=> {
+        localStorage.setItem("items", JSON.stringify(items))
+    }, [items])
     
-    return { url, user, synced, status, tasks, team, sync, toggle, push }
+    useEffect(()=> {
+        localStorage.setItem("users", JSON.stringify(users))
+    }, [users])
+    
+    return { url, synced, user, tasks, users, sync, toggle, push }
 
 }
