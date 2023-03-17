@@ -14,6 +14,8 @@
     animation: dotPulse 1.5s infinite linear;
     animation-delay: .25s;
     margin:auto;
+    margin-left:50%;
+    position:absolute;
 }
 
 .dot-pulse::before, .dot-pulse::after {

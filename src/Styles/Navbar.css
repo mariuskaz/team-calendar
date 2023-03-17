@@ -22,10 +22,6 @@
   padding:10px 15px;
 }
 
-.app-menu-icon {
-  position:absolute;
-}
-
 .right {
   height:28px;
   line-height:28px;
@@ -49,10 +45,51 @@
   margin:0 15px;
 }
 
+.search-box {
+  background: #646464;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  padding:4px;
+  outline: none;
+  padding-left:30px;
+  margin-left:2px;
+  color:#f5f5f5;
+  font-family: Calibri, 'Trebuchet MS', sans-serif;
+  font-size: medium;
+  font-weight:100;
+  width:180px;
+  background: #646464 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' aria-hidden='true' class='search_icon'%3E%3Cpath d='M10.5 3a7.5 7.5 0 015.645 12.438l4.709 4.708a.502.502 0 01-.708.708l-4.708-4.709A7.5 7.5 0 1110.5 3zm0 1a6.5 6.5 0 100 13 6.5 6.5 0 000-13z' fill='white'%3E%3C/path%3E%3C/svg%3E") no-repeat 2px center;
+}
+
+.search-box:focus {
+  color:black;
+  background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' aria-hidden='true' class='search_icon'%3E%3Cpath d='M10.5 3a7.5 7.5 0 015.645 12.438l4.709 4.708a.502.502 0 01-.708.708l-4.708-4.709A7.5 7.5 0 1110.5 3zm0 1a6.5 6.5 0 100 13 6.5 6.5 0 000-13z' fill='black'%3E%3C/path%3E%3C/svg%3E") no-repeat 2px center;
+  width:180px;
+}
+
+.menu-icon {
+  height:24px;
+  width:24px;
+  background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' class='menu_icon' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='white' fill-rule='evenodd' d='M4.5 5h15a.5.5 0 110 1h-15a.5.5 0 010-1zm0 6h15a.5.5 0 110 1h-15a.5.5 0 110-1zm0 6h15a.5.5 0 110 1h-15a.5.5 0 110-1z'%3E%3C/path%3E%3C/svg%3E") no-repeat center;
+}
+
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color:white;
+  opacity: 1; /* Firefox */
+  font-weight: 100;
+}
+
 @media (hover: hover) {
-  .app-menu-icon:hover {
-    background: hsla(0,0%,100%,.2);
-    color:whitesmoke;
+  .menu-icon:hover {
+    background-color: hsla(0,0%,100%,.2);
+  }
+}
+
+@media screen and (max-width: 360px) {
+  .search-box {
+    background-color:transparent;
+    margin-left:0;
+    width:20px;
   }
 }
 
