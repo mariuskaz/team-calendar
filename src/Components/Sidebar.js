@@ -5,12 +5,13 @@ import { useLocation, useSearchParams } from "react-router-dom"
 
 export default function Sidebar({ toggle, todoist }) {
   const [ hidden, setHidden ] = useState(false)
-  const [searchParams] = useSearchParams()
+  const [ searchParams ] = useSearchParams()
   const sidebar = useRef()
 
   const location = useLocation()
   const url = location.pathname
-  const userId = searchParams.get('uid') || 'none'
+  const userId = searchParams.get('uid')
+  const searchText = searchParams.get('search')
 
   const small = window.innerWidth < 800
   const portrait = window.innerWidth < window.innerHeight
@@ -29,8 +30,9 @@ export default function Sidebar({ toggle, todoist }) {
   }
 
   function User({ id, name }) {
-    const link = `${url}?uid=${id}`
-    const currentUser = userId === 'none' && id === todoist.users[0]?.id
+    const params = searchText ? `search=${searchText}&uid=${id}` : `uid=${id}`
+    const link = `${url}?${params}`
+    const currentUser = userId === null && id === todoist.users[0]?.id
     const active = userId === id || currentUser  ? 'active' : ''
 
     return (
