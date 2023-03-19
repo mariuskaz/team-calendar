@@ -42,9 +42,9 @@ export default function Sidebar({ toggle, todoist }) {
     )
   }
 
-  const today = userId !== 'none' ? `/today?uid=${userId}` : '/today'
-  const calendar = userId !== 'none' ? `/calendar?uid=${userId}` : '/calendar'
-  const unscheduled = userId !== 'none' ? `/unscheduled?uid=${userId}` : '/unscheduled'
+  const today = userId !== null ? `/today?uid=${userId}` : '/today'
+  const calendar = userId !== null ? `/calendar?uid=${userId}` : '/calendar'
+  const unscheduled = userId !== null ? `/unscheduled?uid=${userId}` : '/unscheduled'
   
   return (
     <div className={className} ref={sidebar} onClick={handleSidebar} >
