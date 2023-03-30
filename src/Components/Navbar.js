@@ -1,16 +1,19 @@
 import '../Styles/Navbar.css'
 import '../Styles/Dots.css'
 import { useNavigate, useSearchParams } from "react-router-dom"
+import { useState } from 'react'
+import Settings from './Settings'
 
 export default function Navbar({ toggleSidebar, todoist }) {
-  const navigate = useNavigate()
+  const [visible, setVisible] = useState(false)
   const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
 
   function search(event) {
-    if (event.key === "Enter" || event.key === "Escape") {
+    if (event.key === "Enter") {
       event.target.blur()
-      const uid = searchParams.get('uid')
-      let params = 'search=' + encodeURI(event.target.value)
+      let uid = searchParams.get('uid'),
+      params = 'search=' + encodeURI(event.target.value)
       if (uid !== null) params += '&uid=' + uid 
       navigate(`/results?${params}`)
       event.target.value = ""
@@ -24,8 +27,9 @@ export default function Navbar({ toggleSidebar, todoist }) {
         {!todoist.synced && <div className='dot-pulse'/>}
         <div className='right'>
           {todoist.synced && <div className='small'>Last sync<br/><b>{ new Date().toLocaleTimeString() }</b></div>}
-          {todoist.user.avatar && <img className='avatar' alt='avatar' src={todoist.user.avatar} onClick={()=>navigate('/connect')} />}
+          {todoist.user.avatar && <img className='avatar' alt='avatar' src={todoist.user.avatar} onClick={()=>setVisible(b=>!b)} />}
         </div>
+        {visible && <Settings todoist={todoist} hide={()=>setVisible(false)} />}
       </div>
   )
 }

@@ -76,6 +76,7 @@ export default function useTodoist() {
                         setUser({
                             id: data.user.id, 
                             name: data.user.full_name, 
+                            mail: data.user.email,
                             avatar: data.user.avatar_medium,
                             inboxId: data.user.inbox_project_id
                         })
