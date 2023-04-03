@@ -19,6 +19,7 @@ export default function useTodoist() {
 
     const [tasks, setTasks] = useState([])
     const [user, setUser] = useState({})
+    const [projects, setProjects] = useState([])
 
     const [searchParams] = useSearchParams()
     const userId = searchParams.get('uid') || users[0]?.id
@@ -87,6 +88,9 @@ export default function useTodoist() {
             
                         let projects = {}
                         data.projects.forEach( project => projects[project.id] = project.name )
+                        setProjects(Object.keys(projects).map( key => { 
+                            return { id: key, name: projects[key] }
+                        }))
 
                         const todos = data.items
                         .map(task => { 
@@ -166,6 +170,6 @@ export default function useTodoist() {
         localStorage.setItem("users", JSON.stringify(users.filter(user => user.checked)))
     }, [users])
     
-    return { url, synced, user, tasks, users, sync, toggle, push, checkout }
+    return { url, synced, user, tasks, users, projects, sync, toggle, push, checkout }
 
 }

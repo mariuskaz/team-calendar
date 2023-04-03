@@ -62,8 +62,26 @@
 }
 
 .dialog-content {
-    height:455px;
+    max-height:455px;
     overflow-y:auto;
+}
+
+.dialog-section {
+    color:black;
+    padding:0 15px;
+}
+
+.dialog-select {
+    color:black;
+    font-size:14px;
+    padding:7px 5px;
+    width:100%;
+    border-radius:4px;
+}
+
+.dialog-footer {
+    padding:25px 10px 20px;
+    text-align:end;
 }
 
 .dialog-menu {
