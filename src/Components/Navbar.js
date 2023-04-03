@@ -27,9 +27,9 @@ export default function Navbar({ toggleSidebar, todoist }) {
         {!todoist.synced && <div className='dot-pulse'/>}
         <div className='right'>
           {todoist.synced && <div className='small'>Last sync<br/><b>{ new Date().toLocaleTimeString() }</b></div>}
-          {todoist.user.avatar && <img className='avatar' alt='avatar' src={todoist.user.avatar} onClick={()=>setVisible(b=>!b)} />}
+          {todoist.user.avatar && <img className='avatar' alt='avatar' src={todoist.user.avatar} onClick={()=>setVisible(true)} />}
         </div>
-        {visible && <Settings todoist={todoist} hide={()=>setVisible(false)} />}
+        {visible && <Settings todoist={todoist} close={()=>setVisible(false)} />}
       </div>
   )
 }

@@ -252,6 +252,13 @@ progress::-webkit-progress-value {
   text-transform:uppercase;
 }
 
+input[type="checkbox"], input[type="radio"] {
+  filter: hue-rotate(340deg);
+  height:18px;
+  width:18px;
+  vertical-align:middle;
+}
+
 @media (hover: hover) {
   .icon-button:hover, .text-button:hover {
     background:whitesmoke;

@@ -1,0 +1,117 @@
+.dialog-box {
+    position:fixed;
+    background:white;
+    border:1px solid lightgray;
+    border-radius:10px;
+    box-shadow: 0 0 12px lightgray;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width:360px;
+    overflow: hidden;
+}
+
+.dialog-title {
+    border-bottom:1px solid lightgray;
+    color:black;
+    font-size: 14px;
+    padding:5px 5px 8px;
+}
+
+.dialog-close-icon {
+    float:right;
+    height:24px;
+    width:24px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' class='icon_close' width='24' height='24'%3E%3Cpath fill='currentColor' fill-rule='nonzero' d='M5.146 5.146a.5.5 0 0 1 .708 0L12 11.293l6.146-6.147a.5.5 0 0 1 .638-.057l.07.057a.5.5 0 0 1 0 .708L12.707 12l6.147 6.146a.5.5 0 0 1 .057.638l-.057.07a.5.5 0 0 1-.708 0L12 12.707l-6.146 6.147a.5.5 0 0 1-.638.057l-.07-.057a.5.5 0 0 1 0-.708L11.293 12 5.146 5.854a.5.5 0 0 1-.057-.638z'%3E%3C/path%3E%3C/svg%3E") no-repeat center;
+    padding:5px !important;
+    cursor:pointer;
+}
+
+.dialog-caption {
+    display:inline-block;
+    line-height:1.2;
+    padding:10px;
+}
+
+.dialog-caption .title-bold {
+    color:black;
+    font-weight:600;
+}
+
+.dialog-caption .title-big {
+    color:black;
+    font-size:17px;
+}
+
+.dialog-caption .subtitle {
+    color:dimgray;
+    text-transform: lowercase;
+    font-size: small;
+}
+
+.dialog-caption .text {
+    font-size:16px;
+    color:gray;
+}
+
+.dialog-checkbox-right {
+    float:right;
+    margin-top:12px;
+    height:18px;
+    width:18px;
+}
+
+.dialog-content {
+    height:455px;
+    overflow-y:auto;
+}
+
+.dialog-menu {
+    position:absolute;
+    background:white;
+    border:1px solid lightgray;
+    border-radius:10px;
+    width:280px;
+    top:48px;
+    right:22px;
+    box-shadow: 0 0 5px lightgray;
+}
+
+.dialog-menu-item {
+    padding:4px 10px;
+    border-bottom:1px solid lightgray;
+    color:black;
+    font-size: 14px;
+    cursor:pointer;
+}
+
+.dialog-menu-item:last-child {
+    border:0;
+}
+
+.dialog-menu-item i {
+    padding:10px 5px;
+    vertical-align:middle;
+}
+
+.avatar-big {
+    height:50px;
+    border-radius:25px;
+    cursor:pointer;
+    vertical-align: top;
+    margin:5px;
+}
+
+.avatar-medium {
+    height:34px;
+    border-radius:17px;
+    cursor:pointer;
+    vertical-align: top;
+    margin:11px 5px;
+}
+
+@media (hover: hover) {
+    .dialog-menu-item:hover  {
+      background:#eee;
+    }
+}

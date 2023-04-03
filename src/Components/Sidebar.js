@@ -54,7 +54,7 @@ export default function Sidebar({ toggle, todoist }) {
       <NavLink to={unscheduled}><p className='sidebar-item'><i className="material-icons-outlined">inbox</i>Not scheduled</p></NavLink>
       <div className='sidebar-section' />
       <div className='sidebar-section'>My Team</div>
-      {todoist.users.map(user => <User key={user.id} id={user.id} name={user.name} />)}
+      {todoist.users.filter(user => user.checked).map(user => <User key={user.id} id={user.id} name={user.name} />)}
     </div>
   )
 }

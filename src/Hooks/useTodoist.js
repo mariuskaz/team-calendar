@@ -38,6 +38,10 @@ export default function useTodoist() {
         // TODO: push task to Todoist
     }
 
+    function checkout(userId) {
+        setUsers(users => users.map(user => user.id === userId ? {...user, checked:!user.checked} : user))
+    }
+
     useEffect( () => {
         const controller = new AbortController()
         const signal = controller.signal
@@ -104,13 +108,32 @@ export default function useTodoist() {
                         setItems(todos)
                         console.log('items:', todos.length)
 
-                        let users = []
-                        users.push({ id: data.user.id, name: data.user.full_name})
+                        let _users = []
                         data.collaborators.forEach(user => {
-                            if (user.id !== data.user.id) users.push({id: user.id, name: user.full_name})
+                            if (user.id !== data.user.id) {
+                                const avatar = 
+                                    encodeURI('https://avatars.doist.com?fullName=' + user.full_name + '&email=' + user.email)
+                                    
+                                _users.push({
+                                    id: user.id, 
+                                    name: user.full_name, 
+                                    mail: user.email,
+                                    avatar: user.avatar_medium || avatar,
+                                    checked: users.some(us => us.id === user.id && us.checked )
+                                })
+                            }
                         })
 
-                        setUsers(users.slice(0, 8))
+                        _users.sort((a, b) => a.name > b.name ? 1 : -1)
+                        _users.unshift({ 
+                            id: data.user.id, 
+                            name: data.user.full_name, 
+                            mail: data.user.email, 
+                            avatar: data.user.avatar_medium,
+                            checked: true
+                        })
+
+                        setUsers(_users)
                         setSynced(true)
                     })
                 })
@@ -126,7 +149,7 @@ export default function useTodoist() {
         if (!synced) fetchTodoist()
       
         return () => controller.abort()
-    }, [synced, token, navigate])
+    }, [synced, token, users, navigate])
 
     useEffect(() => {
         setTasks(items
@@ -140,9 +163,9 @@ export default function useTodoist() {
     }, [items])
     
     useEffect(()=> {
-        localStorage.setItem("users", JSON.stringify(users))
+        localStorage.setItem("users", JSON.stringify(users.filter(user => user.checked)))
     }, [users])
     
-    return { url, synced, user, tasks, users, sync, toggle, push }
+    return { url, synced, user, tasks, users, sync, toggle, push, checkout }
 
 }
