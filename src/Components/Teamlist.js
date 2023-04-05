@@ -11,7 +11,7 @@ export default function Teamlist({ users, checkout, close }) {
 
     function ListItem({ id, name, mail, avatar, checked }) {
         return (
-            <div className='dialog-menu-item' key={id} onClick={()=>checkout(id)}>
+            <div className='dialog-list-item' key={id} onClick={()=>checkout(id)}>
                 <CheckBox value={checked} />
                 <img className='avatar-medium' alt='avatar' src={avatar} />
                 <div className='dialog-caption'>
@@ -23,6 +23,7 @@ export default function Teamlist({ users, checkout, close }) {
     }
 
     const TeamList = users.slice(1)
+        //.sort((a, b) => b.checked - a.checked )
         .map(user => {
             return <ListItem 
                 key={user.id} 
@@ -34,16 +35,18 @@ export default function Teamlist({ users, checkout, close }) {
         })
     
     return (
-        <div className='dialog-box'>
-            <div className='dialog-title'>
-                <div className='dialog-close-icon' onClick={close} />
-                <div className='dialog-caption'>
-                    <div className='title-big'>My Team</div>
-                    <div className='subtitle'>customize team list</div>
+        <div className='modal-dialog'>
+            <div className='dialog-box'>
+                <div className='dialog-title'>
+                    <div className='dialog-close-icon' onClick={close} />
+                    <div className='dialog-caption'>
+                        <div className='title-big'>My Team</div>
+                        <div className='subtitle'>customize team list</div>
+                    </div>
                 </div>
-            </div>
-            <div className='dialog-content'>
-                {TeamList}
+                <div className='dialog-content'>
+                    {TeamList}
+                </div>
             </div>
         </div>
     )

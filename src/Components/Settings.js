@@ -6,35 +6,42 @@ import '../Styles/Dialog.css'
 export default function Settings({ todoist, close }) {
   const [showTeamList, setShowTeamList] = useState(false)
   const [showDefaultFolder, setShowDefaultFolder] = useState(false)
-  const [defaultFolder, setDefaultFolder] = useState()
+  const [defaultFolder, setDefaultFolder] = useState(todoist.project)
   const navigate = useNavigate()
 
   function handleTodoistSettings() {
     window.open('https://todoist.com/app/settings/account') && close()
   }
 
+  function handleDefaultFolder() {
+    todoist.setup(defaultFolder)
+    close()
+  }
+
   function DefaultFolder() {
     const projects = todoist.projects.map(project => {
-      return <option key={project.id} value={project.id} style={{padding:'5px'}}>{project.name}</option>
+      return <option key={project.id} value={project.id} style={{padding:'5px'}}>{project.name.substring(0,40)}</option>
     })
 
     return (
-      <div className='dialog-box'>
-        <div className='dialog-title' style={{border:'0'}}>
-          <div className='dialog-close-icon' onClick={close} />
-          <div className='dialog-caption'>
-              <div className='title-big'>Default project</div>
-              <div className='subtitle'>for new tasks</div>
-          </div>
-        </div>
-        <div className='dialog-content'>
-            <div className='dialog-section'>
-              <select className='dialog-select' onChange={(e)=>setDefaultFolder(e.target.value)} value={defaultFolder}>{projects}</select>
+      <div className='modal-dialog'>
+        <div className='dialog-box'>
+          <div className='dialog-title' style={{border:'0'}}>
+            <div className='dialog-close-icon' onClick={close} />
+            <div className='dialog-caption'>
+                <div className='title-big'>Default project</div>
+                <div className='subtitle'>for new tasks</div>
             </div>
-        </div>
-        <div className='dialog-footer'>
-          <div className="button button-dark-theme">Apply</div>
-          <div className="button" onClick={close}>Close</div>
+          </div>
+          <div className='dialog-content'>
+              <div className='dialog-section'>
+                <select className='dialog-select' onChange={(e)=>setDefaultFolder(e.target.value)} value={defaultFolder}>{projects}</select>
+              </div>
+          </div>
+          <div className='dialog-footer'>
+            <div className="button button-dark-theme" onClick={handleDefaultFolder}>Apply</div>
+            <div className="button" onClick={close}>Cancel</div>
+          </div>
         </div>
       </div>
     )
