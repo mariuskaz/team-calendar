@@ -21,6 +21,8 @@ export default function Unscheduled() {
         sync={todoist.sync} />
 
       <QuickTodo 
+        project={todoist.project}
+        user={todoist.user.id}
         sync={todoist.sync} />
 
     </div>

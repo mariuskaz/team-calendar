@@ -1,6 +1,6 @@
 import { useState, useRef, memo } from 'react'
 
-function QuickTodo({ due, sync }) {
+function QuickTodo({ due, project, user, sync }) {
   const [ active, setActive] = useState(false)
   const input = useRef()
 
@@ -13,7 +13,12 @@ function QuickTodo({ due, sync }) {
   }
 
   function pushTask() {
-    let task = { content: input.current.value, due_string: due || "" },
+    const task = { 
+      content: input.current.value, 
+      due_string: due || "", 
+      project_id: project, 
+      assignee_id: user 
+    },
     token = localStorage["token"] || "none",
     headers = {
         'Authorization': 'Bearer ' + token,

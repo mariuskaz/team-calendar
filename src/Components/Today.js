@@ -47,6 +47,8 @@ export default function Today() {
 
       <QuickTodo 
         due={'today'} 
+        project={todoist.project}
+        user={todoist.user.id}
         sync={todoist.sync} />
 
     </div>

@@ -20,7 +20,7 @@ export default function useTodoist() {
     const [tasks, setTasks] = useState([])
     const [user, setUser] = useState({})
     const [projects, setProjects] = useState([])
-    const [project, setProject] = useState()
+    const [project, setProject] = useState(() => localStorage['project'])
 
     const [searchParams] = useSearchParams()
     const userId = searchParams.get('uid') || users[0]?.id
@@ -174,6 +174,10 @@ export default function useTodoist() {
     useEffect(()=> {
         localStorage.setItem("users", JSON.stringify(users.filter(user => user.checked)))
     }, [users])
+
+    useEffect(()=> {
+        localStorage.setItem("project", project)
+    }, [project])
     
     return { url, synced, user, tasks, users, projects, project, sync, toggle, push, checkout, setup }
 
