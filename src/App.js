@@ -9,7 +9,8 @@ import useTodoist from './Hooks/useTodoist';
 
 export default function App() {
   const [toggle, setToggle] = useState(0)
-  const [ week, setWeek ] = useState(0)
+  const [week, setWeek] = useState(0)
+  const [today, setToday] = useState(true)
   const todoist = useTodoist()
   const listview =  useRef()
   const scroll = useRef({})
@@ -19,10 +20,16 @@ export default function App() {
 
   useEffect( () => {
     if (!todoist.synced) todoist.sync()
-  }, [todoist])
+    setToday(false)
+  }, [todoist, week])
 
   useLayoutEffect(() => {
-    listview.current.scrollTop = scroll.current[view] || 0
+    if (view ==='/calendar' && today) {
+      const today_section = document.getElementsByClassName('today-section')[0]
+      listview.current.scrollTop = today_section?.offsetTop - 160 || 0
+    } else {
+      listview.current.scrollTop = scroll.current[view] || 0
+    }
     document.addEventListener("visibilitychange", onVisibilityChange)
     return () => document.removeEventListener("visibilitychange", onVisibilityChange)
   })
@@ -33,6 +40,11 @@ export default function App() {
 
   function handleScroll(e) {
     scroll.current = {...scroll.current, [view]:e.target.scrollTop}
+  }
+
+  function showToday() {
+    setToday(true)
+    setWeek(0)
   }
 
   return (
@@ -46,7 +58,7 @@ export default function App() {
         todoist={todoist} />
 
       <main ref={listview} onScroll={handleScroll}>
-        <Outlet context={[todoist, week, setWeek]} />
+        <Outlet context={[todoist, week, setWeek, showToday]} />
       </main>
     </>
   )

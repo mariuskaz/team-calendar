@@ -3,7 +3,7 @@ import DailyList from './DailyList'
 import QuickTodo from './QuickTodo'
 
 export default function Calendar() {
-    const [todoist, week, setWeek] = useOutletContext()
+    const [todoist, week, setWeek, showToday] = useOutletContext()
     const day = new Date().getDay()
     const start = week - day + 1
     const range = week + 7 - day + 1
@@ -41,7 +41,7 @@ export default function Calendar() {
           <div className='calendar-toolbox'>
             <i className="material-icons icon-button" onClick={() => setWeek(w => w - 7)}>chevron_left</i>
             <i className="material-icons icon-button" onClick={() => setWeek(w => w + 7)}>chevron_right</i>
-            <div className="text-button" onClick={() => setWeek(0)}>Today</div>
+            <div className="text-button" onClick={showToday}>Today</div>
           </div>
           {year} {month} 
         </div>

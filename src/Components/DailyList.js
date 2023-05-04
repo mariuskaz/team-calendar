@@ -39,7 +39,11 @@ export default function DailyList({ date, items, url, toggle, sync, advanced }) 
             const title = translate['today']
             const max = items.length
             const value = items.filter(item => item.checked === true).length
-            return  <ProgressBar title={title} value={value} max={max} />
+            return  (
+                <div className='today-section'>
+                    <ProgressBar title={title} value={value} max={max} />
+                </div>
+            )
         }
     }
 
