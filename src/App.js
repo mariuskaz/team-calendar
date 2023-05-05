@@ -18,18 +18,19 @@ export default function App() {
   const location = useLocation()
   const view = location.pathname
 
-  useEffect( () => {
+  useEffect(() => {
     if (!todoist.synced) todoist.sync()
-    setToday(false)
-  }, [todoist, week])
+  }, [todoist])
 
   useLayoutEffect(() => {
-    if (view ==='/calendar' && today) {
-      const today_section = document.getElementsByClassName('today-section')[0]
-      listview.current.scrollTop = today_section?.offsetTop - 160 || 0
-    } else {
-      listview.current.scrollTop = scroll.current[view] || 0
-    }
+    const today_section = document.getElementsByClassName('today-section')[0]
+    listview.current.style.scrollBehavior = 'smooth'
+    listview.current.scrollTop = today_section?.offsetTop - 160 || 0
+  }, [today])
+
+  useLayoutEffect(() => {
+    listview.current.style.scrollBehavior = 'auto'
+    listview.current.scrollTop = scroll.current[view] || 0
     document.addEventListener("visibilitychange", onVisibilityChange)
     return () => document.removeEventListener("visibilitychange", onVisibilityChange)
   })
@@ -39,12 +40,12 @@ export default function App() {
   }
 
   function handleScroll(e) {
-    scroll.current = {...scroll.current, [view]:e.target.scrollTop}
+    scroll.current = { ...scroll.current, [view]:e.target.scrollTop }
   }
 
   function showToday() {
-    setToday(true)
     setWeek(0)
+    setToday(!today)
   }
 
   return (
