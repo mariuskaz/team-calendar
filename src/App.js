@@ -10,7 +10,7 @@ import useTodoist from './Hooks/useTodoist';
 export default function App() {
   const [toggle, setToggle] = useState(0)
   const [week, setWeek] = useState(0)
-  const [today, setToday] = useState(true)
+  const [today, setToday] = useState(false)
   const todoist = useTodoist()
   const listview =  useRef()
   const scroll = useRef({})
@@ -22,7 +22,7 @@ export default function App() {
     if (!todoist.synced) todoist.sync()
   }, [todoist])
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const today_section = document.getElementsByClassName('today-section')[0]
     listview.current.style.scrollBehavior = 'smooth'
     listview.current.scrollTop = today_section?.offsetTop - 160 || 0
