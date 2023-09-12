@@ -80,12 +80,11 @@ main {
 }
 
 .button-dark-theme {
-  background:#505050;
+  background:#303030;
   color:white;
 }
 
 .button-dark-theme:hover {
-  background:#303030;
   color:white;
 }
 
