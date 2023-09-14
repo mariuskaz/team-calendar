@@ -1,7 +1,9 @@
 import { useState, useRef, memo } from 'react'
 
 function QuickTodo({ due, project, user, sync }) {
-  const [ active, setActive] = useState(false)
+  const [ active, setActive ] = useState(false)
+  const [ value, setValue ] = useState("")
+  const [ position, setPosition ] = useState(0)
   const input = useRef()
 
   function handleInput(event) {
@@ -9,7 +11,10 @@ function QuickTodo({ due, project, user, sync }) {
       pushTask()
     } else if (event.key === "Escape") {
       setActive(false)
-    } 
+    } else {
+      setValue(event.target.value)
+      setPosition(event.target.selectionStart)
+    }
   }
 
   function pushTask() {
@@ -36,23 +41,37 @@ function QuickTodo({ due, project, user, sync }) {
     })
 
     setActive(false)
+    setValue("")
   }
 
   function InputBox() {
-    if (active) return (
+    if (active || value.length > 0) return (
       <div>
-        <textarea rows="4"
+        <textarea 
+          rows="4"
           className ="input-box" 
-          placeholder="Type task description" 
           onKeyDownCapture={(e) => handleInput(e)} 
+          onChange={(e) => handleInput(e)} 
           onBlur={() => setActive(false)}
+          onFocus={(e) => e.target.selectionStart = position}
+          value={value}
           ref={input} autoFocus/>
-        <div className="button button-dark-theme" 
+
+        <div 
+          className="button button-dark-theme" 
           onMouseDown={pushTask}>Save</div>
-        <div className="button">Cancel</div>
+
+        <div 
+          className="button" 
+          onMouseDown={() => setValue("")}>Cancel</div>
+
       </div>
     )
-    return <p className ="inline-button" onClick={()=>setActive(true)}><i className="material-icons">add</i>Add task</p>
+
+    return  <p className ="inline-button" 
+              onClick={()=>setActive(true)}>
+              <i className="material-icons">add</i>Add task</p>
+              
   }
 
   return <InputBox/>
