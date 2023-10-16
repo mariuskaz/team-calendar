@@ -26,7 +26,7 @@ export default function useTodoist() {
     const userId = searchParams.get('uid') || users[0]?.id
 
     const navigate = useNavigate()
-    const url = 'https://todoist.com'
+    const url = 'https://app.todoist.com'
 
     function sync() {
         setSynced(false)
