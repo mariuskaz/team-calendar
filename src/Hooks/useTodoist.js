@@ -114,6 +114,8 @@ export default function useTodoist() {
                             }
                         })
 
+                        todos.sort((a, b) => b.priority - a.priority)
+
                         setItems(todos)
                         console.log('items:', todos.length)
 
