@@ -4,7 +4,7 @@
   margin-left:0;
   font-size:0.8em;
   background-color: #fafafa;
-  padding:50px 30px;
+  padding:40px 30px;
   height: calc(100vh - 44px);
   width:200px;
   transition: all .25s cubic-bezier(.4,0,.2,1);
@@ -56,7 +56,7 @@ a {
   width:180px;
   background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' aria-hidden='true' class='search_icon'%3E%3Cpath d='M10.5 3a7.5 7.5 0 015.645 12.438l4.709 4.708a.502.502 0 01-.708.708l-4.708-4.709A7.5 7.5 0 1110.5 3zm0 1a6.5 6.5 0 100 13 6.5 6.5 0 000-13z' fill='gray'%3E%3C/path%3E%3C/svg%3E") no-repeat 2px center;
   position:relative;
-  top:-42px;
+  top:-32px;
   left:14px;
   z-index: 999;
 }
