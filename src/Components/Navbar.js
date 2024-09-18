@@ -26,7 +26,7 @@ export default function Navbar({ toggleSidebar, todoist }) {
         <input className='search-box' type='search' placeholder='search' onKeyDown={search} />
         {!todoist.synced && <div className='dot-pulse'/>}
         <div className='right'>
-          {todoist.synced && <div className='small'>Last sync<br/><b>{ new Date().toLocaleTimeString() }</b></div>}
+          {todoist.synced && <div className='small'>Last sync<br/>{ new Date().toLocaleTimeString() }</div>}
           {todoist.user.avatar && <img className='avatar' alt='avatar' src={todoist.user.avatar} onClick={()=>setVisible(true)} />}
         </div>
         {visible && <Settings todoist={todoist} close={()=>setVisible(false)} />}

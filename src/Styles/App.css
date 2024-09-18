@@ -14,6 +14,10 @@ html, body {
   opacity: 1;
 }
 
+::-webkit-scrollbar {
+  width: 10px;
+}
+
 textarea {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
