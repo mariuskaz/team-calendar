@@ -5,7 +5,7 @@ import QuickTodo from "./QuickTodo"
 
 export default function Unscheduled() {
   const [todoist] = useOutletContext()
-  const notSheduled = todoist.tasks.filter( item => !item.due )
+  const notSheduled = todoist.tasks.filter( item => !item.due && !item.checked )
   
   return (
     <div className='content'>
