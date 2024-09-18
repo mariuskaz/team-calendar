@@ -1,12 +1,13 @@
 import '../Styles/Sidebar.css'
 import { NavLink, Link } from "react-router-dom"
 import { useRef, useEffect, useState } from 'react'
-import { useLocation, useSearchParams } from "react-router-dom"
+import { useLocation, useSearchParams, useNavigate } from "react-router-dom"
 
 export default function Sidebar({ toggle, todoist }) {
   const [ hidden, setHidden ] = useState(false)
   const [ searchParams ] = useSearchParams()
   const sidebar = useRef()
+  const navigate = useNavigate()
 
   const location = useLocation()
   const url = location.pathname
@@ -45,9 +46,21 @@ export default function Sidebar({ toggle, todoist }) {
   const today = userId !== null ? `/today?uid=${userId}` : '/today'
   const calendar = userId !== null ? `/calendar?uid=${userId}` : '/calendar'
   const unscheduled = userId !== null ? `/unscheduled?uid=${userId}` : '/unscheduled'
+
+  function search(event) {
+    if (event.key === "Enter") {
+      event.target.blur()
+      let uid = searchParams.get('uid'),
+      params = 'search=' + encodeURI(event.target.value)
+      if (uid !== null) params += '&uid=' + uid 
+      navigate(`/results?${params}`)
+      event.target.value = ""
+    }
+  }
   
   return (
     <div className={className} ref={sidebar} onClick={handleSidebar} >
+      <input className='search-box' type='search' placeholder='search' onKeyDown={search} />
       <div className='sidebar-section'>Calendar</div>
       <NavLink to={today}><p className='sidebar-item'><i className="material-icons-outlined">event</i>Today</p></NavLink>
       <NavLink to={calendar}><p className='sidebar-item'><i className="material-icons-outlined">calendar_month</i>Calendar</p></NavLink>
