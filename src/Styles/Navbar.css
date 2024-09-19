@@ -27,8 +27,8 @@
   line-height:28px;
   vertical-align: middle;
   position:absolute;
-  right:24px;
-  top:18px;
+  right:15px;
+  top:10px;
 }
 
 .avatar {
@@ -42,7 +42,7 @@
   vertical-align:top;
   font-size:x-small;
   line-height:14px;
-  margin:0 15px;
+  margin:0 10px;
 }
 
 .menu-icon {

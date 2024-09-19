@@ -27,7 +27,7 @@ export default function Sidebar({ toggle, todoist }) {
   }, [toggle]);
 
   function handleSidebar() {
-    if (small || portrait) setHidden(true)
+    if (document.activeElement.type !== 'search' && (small || portrait)) setHidden(true)
   }
 
   function User({ id, name }) {
@@ -55,6 +55,7 @@ export default function Sidebar({ toggle, todoist }) {
       if (uid !== null) params += '&uid=' + uid 
       navigate(`/results?${params}`)
       event.target.value = ""
+      handleSidebar()
     }
   }
   
