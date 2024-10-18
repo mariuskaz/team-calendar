@@ -14,9 +14,15 @@
     animation: dotPulse 1.5s infinite linear;
     animation-delay: .25s;
     margin:auto;
-    margin-left:50%;
+    margin-left:55%;
     position:absolute;
 }
+
+@media screen and (max-width: 800px) {
+    .dot-pulse {
+        margin-left:50%;
+    }
+  }
 
 .dot-pulse::before, .dot-pulse::after {
     content: '';
