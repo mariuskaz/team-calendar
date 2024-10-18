@@ -70,7 +70,7 @@ function QuickTodo({ due, project, user, sync }) {
 
     return  <p className ="inline-button" 
               onClick={()=>setActive(true)}>
-              <i className="material-icons">add</i>Add task</p>
+              <i className="material-icons" style={{color:'black'}}>add</i>Add task</p>
               
   }
 
