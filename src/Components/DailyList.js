@@ -12,7 +12,9 @@ export default function DailyList({ date, items, url, toggle, sync, advanced }) 
     const color = new Date(date).toLocaleString("default", options) < new Date().toLocaleString("default", options) ? 'crimson' : 'green'
     const today = new Date(date).toDateString() === new Date().toDateString()
     
-    const todolist = items.map( todo => {
+    const todolist = items
+        .sort((a, b) => b.priority - a.priority)
+        .map( todo => {
         return <Todo key={todo.id} 
                 todo={todo} 
                 color={color} 
