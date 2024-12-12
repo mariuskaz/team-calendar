@@ -36,6 +36,10 @@ export default function useTodoist() {
         setItems(todos => todos.map(todo => todo.id === todoId ? {...todo, checked:!todo.checked} : todo))
     }
 
+    function update(id, date) {
+        setItems(todos => todos.map(todo => todo.id === id ? {...todo, due: { date }} : todo))
+    }
+
     function push(todo="task", due="") {
         // TODO: push task to Todoist
     }
@@ -181,6 +185,6 @@ export default function useTodoist() {
         localStorage.setItem("project", project)
     }, [project])
     
-    return { url, synced, user, tasks, users, projects, project, sync, toggle, push, checkout, setup }
+    return { url, synced, user, tasks, users, projects, project, sync, toggle, update, push, checkout, setup }
 
 }

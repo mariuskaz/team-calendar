@@ -60,6 +60,7 @@ export default function Calendar() {
                   items={item.tasks} 
                   advanced={true} 
                   url={todoist.url}
+                  update={(id, date)=>todoist.update(id, date)}
                   toggle={(todo)=>todoist.toggle(todo)} 
                   sync={todoist.sync} />
                 <QuickTodo 

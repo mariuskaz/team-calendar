@@ -5,7 +5,7 @@ import ProgressBar from './ProgressBar'
 const lang = navigator.language.substring(0,2)
 const translate = Dictionary[lang] || Dictionary['en']
 
-export default function DailyList({ date, items, url, toggle, sync, advanced }) {
+export default function DailyList({ date, items, url, toggle, update, sync, advanced }) {
     const day = new Date(date).getDate()
     const weekday = new Date(date).toLocaleString("default", { weekday: 'long' })
     const options = { year:'numeric', month:'numeric', day:'numeric' }
@@ -29,15 +29,18 @@ export default function DailyList({ date, items, url, toggle, sync, advanced }) 
         year = date.getFullYear(),
         month = date.getMonth() + 1,
         d = date.getDate(),
+        due = year + "-" + month + "-" + d,
 
         data = {
-            due_date : year + "-" + month + "-" + d,
+            due_date: due
         },
 
         headers = {
             'Authorization': 'Bearer ' + localStorage["token"] || "",
             'Content-Type': 'application/json'
         }
+
+        update(id, due)
 
         fetch('https://api.todoist.com/rest/v2/tasks/' + id, { 
                 method: 'POST',
@@ -50,7 +53,7 @@ export default function DailyList({ date, items, url, toggle, sync, advanced }) 
         })
 
         //event.preventDefault();
-      }
+    }
 
     function Day() {
         return (
