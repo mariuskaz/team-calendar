@@ -24,8 +24,38 @@ export default function DailyList({ date, items, url, toggle, sync, advanced }) 
                 browse={()=>window.open(`${url}/app/project/${todo.project.id}`)} />
     })
 
+    function drop(event) {
+        const id = event.dataTransfer.getData("Text"),
+        year = date.getFullYear(),
+        month = date.getMonth() + 1,
+        d = date.getDate(),
+
+        data = {
+            due_date : year + "-" + month + "-" + d,
+        },
+
+        headers = {
+            'Authorization': 'Bearer ' + localStorage["token"] || "",
+            'Content-Type': 'application/json'
+        }
+
+        fetch('https://api.todoist.com/rest/v2/tasks/' + id, { 
+                method: 'POST',
+                headers : headers,
+                body: JSON.stringify(data)
+        })
+
+        .then(res => {
+            sync()
+        })
+
+        //event.preventDefault();
+      }
+
     function Day() {
-        return <div className='calendar-bold'>{day}</div>
+        return (
+            <div className='calendar-bold'>{day}</div>
+        )
     }
 
     function Weekday() {
@@ -54,12 +84,14 @@ export default function DailyList({ date, items, url, toggle, sync, advanced }) 
     }
 
     return (
-        <>
+        <div 
+            onDragOver={(event) => event.preventDefault()}
+            onDrop={(event) => drop(event)}>
             {today && <TodayStatus />}
             <Day />
             <Weekday />
             <Line />
             {todolist}
-        </>
+        </div>
     )
 }

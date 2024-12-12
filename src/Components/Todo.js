@@ -97,8 +97,12 @@ export default function Todo({ todo, color, open, browse, toggle, sync }) {
         )
     }
 
+    function drag(event) {
+        event.dataTransfer.setData("Text", todo.id);
+      }
+
     return (
-        <div style={style}>
+        <div id={todo.id} style={style} draggable="true" onDragStart={(event) => drag(event)}>
             <Checkmark/><Content/>
         </div>
     )
