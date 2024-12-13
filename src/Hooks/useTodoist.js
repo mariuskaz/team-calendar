@@ -40,8 +40,14 @@ export default function useTodoist() {
         setItems(todos => todos.map(todo => todo.id === id ? {...todo, due: { date }} : todo))
     }
 
-    function push(todo="task", due="") {
-        // TODO: push task to Todoist
+    function push(task = {content: "new task"}) {
+        task.id = Math.floor(Math.random() * 10000)
+        task.priority = 1
+        task.checked = false
+        task.project = project
+        task.responsibleId =  userId
+        task.due = { date: task.due_string }
+        setItems([...items, task])
     }
 
     function checkout(userId) {

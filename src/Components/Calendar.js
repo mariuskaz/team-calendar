@@ -67,6 +67,7 @@ export default function Calendar() {
                   due={item.due} 
                   project={todoist.project}
                   user={todoist.user.id}
+                  push={(task) => todoist.push(task)}
                   sync={todoist.sync} />
                 <div className='space' />
               </div>

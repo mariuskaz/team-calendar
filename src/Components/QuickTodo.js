@@ -1,6 +1,6 @@
 import { useState, useRef, memo } from 'react'
 
-function QuickTodo({ due, project, user, sync }) {
+function QuickTodo({ due, project, user, push, sync }) {
   const [ active, setActive ] = useState(false)
   const [ value, setValue ] = useState("")
   const [ position, setPosition ] = useState(0)
@@ -29,6 +29,8 @@ function QuickTodo({ due, project, user, sync }) {
         'Authorization': 'Bearer ' + token,
         'Content-Type': 'application/json'
     }
+
+    push(task)
 
     fetch('https://api.todoist.com/rest/v2/tasks', { 
         method: 'POST',

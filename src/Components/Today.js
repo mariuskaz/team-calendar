@@ -50,6 +50,7 @@ export default function Today() {
         due={'today'} 
         project={todoist.project}
         user={todoist.user.id}
+        push={(task) => todoist.push(task)}
         sync={todoist.sync} />
 
     </div>
