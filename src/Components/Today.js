@@ -39,10 +39,11 @@ export default function Today() {
         <div className='space'/>}
 
       <DailyList 
-        date={today} 
+        date={new Date()} 
         items={todayTasks}
         url={todoist.url}
         toggle={(todo)=>todoist.toggle(todo)} 
+        update={(id, date)=>todoist.update(id, date)}
         sync={todoist.sync} />
 
       <QuickTodo 
