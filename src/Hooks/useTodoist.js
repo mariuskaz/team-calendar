@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 export default function useTodoist() {
     const [synced, setSynced] = useState(false)
     const [token] = useState(() => localStorage['token'])
+    const [syncToken, setSyncToken] = useState('*')
 
     const [items, setItems] = useState(() => {
         if (localStorage['items']) 
@@ -46,7 +47,8 @@ export default function useTodoist() {
         task.checked = false
         task.project = project
         task.responsibleId =  userId
-        task.due = { date: task.due_string }
+        task.due = { date: task.due_string == "today" ? new Date().toLocaleString() : task.due_string }
+        console.log(task)
         setItems([...items, task])
     }
 
@@ -77,7 +79,7 @@ export default function useTodoist() {
                 },
         
                 params = {
-                    sync_token: '*',
+                    sync_token: syncToken,
                     resource_types: ["user","items","projects","collaborators"]
                 }
         
@@ -92,7 +94,7 @@ export default function useTodoist() {
             
                 .then(res => {
                     res.json().then(data => {
-
+                        
                         setUser({
                             id: data.user.id, 
                             name: data.user.full_name, 
@@ -126,9 +128,6 @@ export default function useTodoist() {
 
                         todos.sort((a, b) => b.priority - a.priority)
 
-                        setItems(todos)
-                        console.log('items:', todos.length)
-
                         let _users = []
                         data.collaborators.forEach(user => {
                             if (user.id !== data.user.id) {
@@ -155,7 +154,27 @@ export default function useTodoist() {
                         })
 
                         setUsers(_users)
-                        setSynced(true)
+
+                        if (syncToken === '*') {
+                            setSyncToken(data.sync_token)
+                            setItems(todos)
+                            
+                        } else {
+                            const map = new Map();
+                            items.forEach(item => {
+                                map.set(item.id, item);
+                            });
+
+                            todos.forEach(todo => {
+                                map.set(todo.id, todo);
+                            });
+
+                            setItems(Array.from(map.values()))
+                            setSynced(true)
+                        }
+
+                        console.log('items:', items.length)
+                        
                     })
                 })
         
