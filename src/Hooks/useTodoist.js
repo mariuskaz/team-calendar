@@ -47,7 +47,7 @@ export default function useTodoist() {
         task.checked = false
         task.project = project
         task.responsibleId =  userId
-        task.due = { date: task.due_string == "today" ? new Date().toLocaleString() : task.due_string }
+        task.due = { date: task.due_string === "today" ? new Date().toLocaleString() : task.due_string }
         console.log(task)
         setItems([...items, task])
     }
