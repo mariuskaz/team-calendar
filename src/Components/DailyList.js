@@ -27,9 +27,9 @@ export default function DailyList({ date, items, url, toggle, update, sync, adva
     function drop(event) {
         const id = event.dataTransfer.getData("Text"),
         year = date.getFullYear(),
-        month = date.getMonth() + 1,
-        d = date.getDate(),
-        due = year + "-" + month + "-" + d,
+        month = "0" + date.getMonth() + 1,
+        d = "0" + date.getDate(),
+        due = year + "-" + month.slice(-2) + "-" + d.slice(-2),
 
         data = {
             due_date: due
