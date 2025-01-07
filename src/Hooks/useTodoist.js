@@ -187,7 +187,7 @@ export default function useTodoist() {
     if (!synced) fetchTodoist();
 
     return () => controller.abort();
-  }, [synced, token, syncToken, items, users, navigate]);
+  }, [synced, token, syncToken, items, projects, user, users, navigate]);
 
   useEffect(() => {
     setTasks(
