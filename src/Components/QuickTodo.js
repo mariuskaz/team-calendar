@@ -18,30 +18,8 @@ function QuickTodo({ due, project, user, push, sync }) {
   }
 
   function pushTask() {
-    const task = { 
-      content: input.current.value, 
-      due_string: due || "", 
-      project_id: project, 
-      assignee_id: user 
-    },
-    token = localStorage["token"] || "none",
-    headers = {
-        'Authorization': 'Bearer ' + token,
-        'Content-Type': 'application/json'
-    }
-
-    push(task)
-
-    fetch('https://api.todoist.com/rest/v2/tasks', { 
-        method: 'POST',
-        headers : headers,
-        body: JSON.stringify(task)
-    })
-
-    .then(response => {
-      sync()
-    })
-
+    const content = input.current.value
+    push(content, due)
     setActive(false)
     setValue("")
   }

@@ -41,15 +41,26 @@ export default function useTodoist() {
         setItems(todos => todos.map(todo => todo.id === id ? {...todo, due: { date }} : todo))
     }
 
-    function push(task = {content: "new task"}) {
-        task.id = Math.floor(Math.random() * 10000)
-        task.priority = 1
-        task.checked = false
-        task.project = project
-        task.responsibleId =  userId
-        task.due = { date: task.due_string === "today" ? new Date().toLocaleString() : task.due_string }
-        console.log(task)
-        setItems([...items, task])
+    function push(content, due) {
+        const task = { 
+            content: content || "New task", 
+            due_string: due || "", 
+            project_id: project, 
+            assignee_id: user.id 
+        },
+        headers = {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json'
+        }
+    
+        fetch('https://api.todoist.com/rest/v2/tasks', { 
+            method: 'POST',
+            headers : headers,
+            body: JSON.stringify(task)
+        })
+        .then(response => {
+            sync()
+        })
     }
 
     function checkout(userId) {
