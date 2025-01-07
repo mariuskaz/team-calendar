@@ -113,7 +113,7 @@ export default function useTodoist() {
         name: data.user.full_name,
         mail: data.user.email,
         avatar: data.user.avatar_medium,
-        inboxId: data.user.inbox_project_id,
+        inbox_project_id: data.user.inbox_project_id,
       });
 
       const _projects = Object.fromEntries(
@@ -128,11 +128,12 @@ export default function useTodoist() {
       setItems(todos);
       setSyncToken(data.sync_token);
       
-      console.log('items', items.length)
+      console.log('items:', items.length)
     };
 
     const handleIncrementalSync = (data) => {
       const todos = formatTodos(data.items, projects, user);
+      console.log(todos)
 
       const updatedItems = new Map(items.map((item) => [item.id, item]));
       todos.forEach((todo) => updatedItems.set(todo.id, todo));
@@ -140,7 +141,7 @@ export default function useTodoist() {
       setItems([...updatedItems.values()]);
       setSynced(true);
 
-      console.log('items', items.length)
+      console.log('items:', items.length)
     };
 
     const formatTodos = (items, projects, user) => {
