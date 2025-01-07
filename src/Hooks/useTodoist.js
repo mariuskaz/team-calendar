@@ -20,7 +20,7 @@ export default function useTodoist() {
 
     const [tasks, setTasks] = useState([])
     const [user, setUser] = useState({})
-    const [projects, setProjects] = useState([])
+    const [projects, setProjects] = useState({})
     const [project, setProject] = useState(() => localStorage['project'])
 
     const [searchParams] = useSearchParams()
@@ -105,72 +105,85 @@ export default function useTodoist() {
             
                 .then(res => {
                     res.json().then(data => {
-                        
-                        setUser({
-                            id: data.user.id, 
-                            name: data.user.full_name, 
-                            mail: data.user.email,
-                            avatar: data.user.avatar_medium,
-                            inboxId: data.user.inbox_project_id
-                        })
-            
-                        let projects = {}
-                        data.projects.forEach( project => projects[project.id] = project.name )
-                        setProjects(Object.keys(projects).map( key => { 
-                            return { id: key, name: projects[key] }
-                        }))
-
-                        const todos = data.items
-                        .map(task => { 
-                            return { 
-                                id: task.id, 
-                                checked: task.priority === 2, 
-                                content: task.content, 
-                                due: task.due, 
-                                priority: task.priority,
-                                responsibleId: task.project_id === data.user.inbox_project_id ? 
-                                    data.user.id : task.responsible_uid,
-                                project: { 
-                                    id: task.project_id, 
-                                    name: projects[task.project_id] 
-                                } 
-                            }
-                        })
-
-                        todos.sort((a, b) => b.priority - a.priority)
-
-                        let _users = []
-                        data.collaborators.forEach(user => {
-                            if (user.id !== data.user.id) {
-                                const avatar = 
-                                    encodeURI('https://avatars.doist.com?fullName=' + user.full_name + '&email=' + user.email)
-                                    
-                                _users.push({
-                                    id: user.id, 
-                                    name: user.full_name, 
-                                    mail: user.email,
-                                    avatar: user.avatar_medium || avatar,
-                                    checked: users.some(us => us.id === user.id && us.checked )
-                                })
-                            }
-                        })
-
-                        _users.sort((a, b) => a.name > b.name ? 1 : -1)
-                        _users.unshift({ 
-                            id: data.user.id, 
-                            name: data.user.full_name, 
-                            mail: data.user.email, 
-                            avatar: data.user.avatar_medium,
-                            checked: true
-                        })
-
-                        setUsers(_users)
 
                         if (syncToken === '*') {
-                            setSyncToken(data.sync_token)
+                            setUser({
+                                id: data.user.id, 
+                                name: data.user.full_name, 
+                                mail: data.user.email,
+                                avatar: data.user.avatar_medium,
+                                inboxId: data.user.inbox_project_id
+                            })
+                
+                            let _projects = {}
+                            data.projects.forEach( project => _projects[project.id] = project.name )
+                            setProjects(_projects)
+
+                            const todos = data.items.map(task => { 
+                                return { 
+                                    id: task.id, 
+                                    checked: task.priority === 2, 
+                                    content: task.content, 
+                                    due: task.due, 
+                                    priority: task.priority,
+                                    responsibleId: task.project_id === data.user.inbox_project_id ? 
+                                        data.user.id : task.responsible_uid,
+                                    project: { 
+                                        id: task.project_id, 
+                                        name: _projects[task.project_id] 
+                                    } 
+                                }
+                            })
+    
+                            todos.sort((a, b) => b.priority - a.priority)
+    
+                            let _users = []
+                            data.collaborators.forEach(user => {
+                                if (user.id !== data.user.id) {
+                                    const avatar = 
+                                        encodeURI('https://avatars.doist.com?fullName=' + user.full_name + '&email=' + user.email)
+                                        
+                                    _users.push({
+                                        id: user.id, 
+                                        name: user.full_name, 
+                                        mail: user.email,
+                                        avatar: user.avatar_medium || avatar,
+                                        checked: users.some(us => us.id === user.id && us.checked )
+                                    })
+                                }
+                            })
+    
+                            _users.sort((a, b) => a.name > b.name ? 1 : -1)
+                            _users.unshift({ 
+                                id: data.user.id, 
+                                name: data.user.full_name, 
+                                mail: data.user.email, 
+                                avatar: data.user.avatar_medium,
+                                checked: true
+                            })
+
+                            setUsers(_users)
                             setItems(todos)
+                            setSyncToken(data.sync_token)
                             
                         } else {
+                            const todos = data.items.map(task => { 
+                                return { 
+                                    id: task.id, 
+                                    checked: task.priority === 2, 
+                                    content: task.content, 
+                                    due: task.due, 
+                                    priority: task.priority,
+                                    responsibleId: task.project_id === data.user.inbox_project_id ? 
+                                        data.user.id : task.responsible_uid,
+                                    project: { 
+                                        id: task.project_id, 
+                                        name: projects[task.project_id] 
+                                    } 
+                                }
+                            })
+    
+                            todos.sort((a, b) => b.priority - a.priority)
                             const map = new Map();
                             items.forEach(item => {
                                 map.set(item.id, item);
