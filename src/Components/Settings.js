@@ -19,8 +19,8 @@ export default function Settings({ todoist, close }) {
   }
 
   function DefaultFolder() {
-    const projects = todoist.projects.map(project => {
-      return <option key={project.id} value={project.id} style={{padding:'5px'}}>{project.name.substring(0,40)}</option>
+    const projects = Object.entries(todoist.projects).map(([id, name]) => {
+      return <option key={id} value={id} style={{padding:'5px'}}>{name.substring(0,40)}</option>
     })
 
     return (
