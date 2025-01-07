@@ -152,7 +152,7 @@ export default function useTodoist() {
           due: task.due,
           priority: task.priority,
           responsibleId:
-            task.project_id === user.inboxId ? user.id : task.responsible_uid,
+            task.project_id === user.inbox_project_id ? user.id : task.responsible_uid,
           project: {
             id: task.project_id,
             name: projects[task.project_id],
@@ -181,7 +181,7 @@ export default function useTodoist() {
             `https://avatars.doist.com?fullName=${collaborator.full_name}&email=${collaborator.email}`,
           checked: existingUsers.some((u) => u.id === collaborator.id && u.checked),
         })),
-      ] //.sort((a, b) => a.name.localeCompare(b.name));
+      ]
     };
 
     if (!synced) fetchTodoist();
