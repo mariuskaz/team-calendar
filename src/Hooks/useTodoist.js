@@ -133,7 +133,6 @@ export default function useTodoist() {
 
     const handleIncrementalSync = (data) => {
       const todos = formatTodos(data.items, projects, user);
-      console.log(todos)
 
       const updatedItems = new Map(items.map((item) => [item.id, item]));
       todos.forEach((todo) => updatedItems.set(todo.id, todo));
