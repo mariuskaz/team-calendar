@@ -48,10 +48,7 @@ export default function Today() {
 
       <QuickTodo 
         due={'today'} 
-        project={todoist.project}
-        user={todoist.user.id}
-        push={(task) => todoist.push(task)}
-        sync={todoist.sync} />
+        push={(task, date) => todoist.push(task, date)} />
 
     </div>
   )

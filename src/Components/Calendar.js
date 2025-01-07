@@ -65,10 +65,7 @@ export default function Calendar() {
                   sync={todoist.sync} />
                 <QuickTodo 
                   due={item.due} 
-                  project={todoist.project}
-                  user={todoist.user.id}
-                  push={(task) => todoist.push(task)}
-                  sync={todoist.sync} />
+                  push={(task, date) => todoist.push(task, date)} />
                 <div className='space' />
               </div>
             )

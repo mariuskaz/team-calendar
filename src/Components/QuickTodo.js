@@ -1,6 +1,6 @@
 import { useState, useRef, memo } from 'react'
 
-function QuickTodo({ due, project, user, push, sync }) {
+function QuickTodo({ due, push }) {
   const [ active, setActive ] = useState(false)
   const [ value, setValue ] = useState("")
   const [ position, setPosition ] = useState(0)
@@ -18,8 +18,8 @@ function QuickTodo({ due, project, user, push, sync }) {
   }
 
   function pushTask() {
-    const content = input.current.value
-    push(content, due)
+    const todo = input.current.value
+    push(todo, due)
     setActive(false)
     setValue("")
   }
