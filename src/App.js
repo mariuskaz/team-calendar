@@ -51,6 +51,7 @@ export default function App() {
   return (
     <>
       <Navbar
+        toggle={toggle}
         todoist={todoist}
         toggleSidebar={()=>setToggle(n => n + 1)} />
 
