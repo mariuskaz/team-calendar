@@ -147,6 +147,7 @@ export default function useTodoist() {
       return items
         .map((task) => ({
           id: task.id,
+          v2_id: task.v2_id,
           checked: task.priority === 2,
           content: task.content,
           due: task.due,

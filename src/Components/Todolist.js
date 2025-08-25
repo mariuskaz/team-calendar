@@ -8,7 +8,7 @@ export default function Todolist({ title, items, color, url, toggle, sync }) {
                 color={color} 
                 sync={sync}
                 toggle={()=>toggle(todo.id)}
-                open={()=>window.open(`${url}/app/task/${todo.id}`)}
+                open={()=>window.open(`${url}/app/task/${todo.v2_id}`)}
                 browse={()=>window.open(`${url}/app/project/${todo.project.id}`)} />
     })
 
