@@ -205,22 +205,18 @@ main {
   color:gray;
 }
 
-p {
+.inline-button {
   display: flex;
   align-items: center;
   cursor: pointer;
   padding:1px 4px 2px;
   margin:12px 0;
-}
-
-.inline-button {
-  color:gray;
   font-size:0.9em;
   padding-left:2px;
 }
 
 .inline-button:hover {
-  color:black
+  color:black;
 }
 
 .input-box {
@@ -232,7 +228,9 @@ p {
   font: 0.9em Calibri;
 }
 
-
+.black {
+  color: black;
+}
 
 
 progress {

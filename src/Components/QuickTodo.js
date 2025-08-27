@@ -48,10 +48,14 @@ function QuickTodo({ due, push }) {
       </div>
     )
 
-    return  <p className ="inline-button" 
-              onClick={()=>setActive(true)}>
-              <i className="material-icons" style={{color:'black'}}>add</i>Add task</p>
-              
+    return  (
+      <div 
+        className ="inline-button black"
+        onClick={()=>setActive(true)}>
+          <i className="material-icons black">add</i>
+          <span>Add task</span>
+      </div>
+    )
   }
 
   return <InputBox/>
