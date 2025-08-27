@@ -152,8 +152,7 @@ export default function useTodoist() {
           content: task.content,
           due: task.due,
           priority: task.priority,
-          responsibleId:
-            task.project_id === user.inbox_project_id ? user.id : task.responsible_uid,
+          responsibleId: task.project_id === user.inbox_project_id ? user.id : task.responsible_uid,
           project: {
             id: task.project_id,
             name: projects[task.project_id],

@@ -3,6 +3,7 @@ import './Styles/App.css';
 
 import { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
+import Loader from './Components/Loader';
 import Navbar from './Components/Navbar';
 import Sidebar from './Components/Sidebar';
 import useTodoist from './Hooks/useTodoist';
@@ -51,7 +52,6 @@ export default function App() {
   return (
     <>
       <Navbar
-        toggle={toggle}
         todoist={todoist}
         toggleSidebar={()=>setToggle(n => n + 1)} />
 
@@ -60,6 +60,7 @@ export default function App() {
         todoist={todoist} />
 
       <main ref={listview} onScroll={handleScroll}>
+        {!todoist.synced && <Loader />}
         <Outlet context={[todoist, week, setWeek, showToday]} />
       </main>
     </>
