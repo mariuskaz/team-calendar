@@ -82,7 +82,7 @@ export default function useTodoist() {
       };
       const params = {
         sync_token: syncToken,
-        resource_types: ["user", "items", "projects", "collaborators"],
+        resource_types: ["user", "items", "projects", "collaborators", "notes"],
       };
 
       try {
@@ -94,16 +94,12 @@ export default function useTodoist() {
         });
 
         const data = await response.json();
+        syncToken === "*" ? handleInitialSync(data) : handleIncrementalSync(data);
+  
 
-        if (syncToken === "*") {
-          handleInitialSync(data);
-        } else {
-          handleIncrementalSync(data);
-        }
       } catch (err) {
-        if (err.name !== "AbortError") {
+        if (err.name !== "AbortError")
           console.error("Connection error:", err.message);
-        }
       }
     };
 
@@ -128,7 +124,22 @@ export default function useTodoist() {
       setItems(todos);
       setSyncToken(data.sync_token);
       
-      console.log('items:', items.length)
+      console.log('tasks...:', items.length)
+      data.notes.forEach((note) => {
+        const isSameDay = (date1, date2) => {
+          const d1 = new Date(date1);
+          const d2 = new Date(date2);
+          return d1.getFullYear() === d2.getFullYear() &&
+                 d1.getMonth() === d2.getMonth() &&
+                 d1.getDate() === d2.getDate();
+        }
+
+        if (isSameDay(note.posted_at, new Date()) && note.content.length > 0) {
+            console.log("%cComment " + new Date(note.posted_at).toLocaleString(), "font-weight: 900; color: black");
+            console.log(note.content);
+        }
+      });
+      setSynced(true);
     };
 
     const handleIncrementalSync = (data) => {
@@ -140,7 +151,12 @@ export default function useTodoist() {
       setItems([...updatedItems.values()]);
       setSynced(true);
 
-      console.log('items:', items.length)
+      console.log('tasks:', items.length)
+      data.notes.forEach((note) => {
+          console.log("%cComment " + new Date(note.posted_at).toLocaleString(), "font-weight: 900; color: black");
+          console.log(note.content);
+      });
+
     };
 
     const formatTodos = (items, projects, user) => {
