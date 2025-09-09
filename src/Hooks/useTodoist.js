@@ -126,14 +126,6 @@ export default function useTodoist() {
       
       console.log('tasks...:', items.length)
       data.notes.forEach((note) => {
-        const isSameDay = (date1, date2) => {
-          const d1 = new Date(date1);
-          const d2 = new Date(date2);
-          return d1.getFullYear() === d2.getFullYear() &&
-                 d1.getMonth() === d2.getMonth() &&
-                 d1.getDate() === d2.getDate();
-        }
-
         if (isSameDay(note.posted_at, new Date()) && note.content.length > 0) {
             console.log("%cComment " + new Date(note.posted_at).toLocaleString(), "font-weight: 900; color: black");
             console.log(note.content);
@@ -153,11 +145,21 @@ export default function useTodoist() {
 
       console.log('tasks:', items.length)
       data.notes.forEach((note) => {
+        if (isSameDay(note.posted_at, new Date()) && note.content.length > 0) {
           console.log("%cComment " + new Date(note.posted_at).toLocaleString(), "font-weight: 900; color: black");
           console.log(note.content);
+        }
       });
 
     };
+
+    const isSameDay = (date1, date2) => {
+      const d1 = new Date(date1);
+      const d2 = new Date(date2);
+      return d1.getFullYear() === d2.getFullYear() &&
+              d1.getMonth() === d2.getMonth() &&
+              d1.getDate() === d2.getDate();
+    }
 
     const formatTodos = (items, projects, user) => {
       return items
