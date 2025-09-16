@@ -131,7 +131,6 @@ export default function useTodoist() {
             console.log(note.content);
         }
       });
-      setSynced(true);
     };
 
     const handleIncrementalSync = (data) => {
