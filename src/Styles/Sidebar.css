@@ -27,9 +27,22 @@ a {
 }
 
 .sidebar-item {
+  display:flex;
+  align-items:center;
   padding:4px 10px;
   border-radius:4px;
   margin:1px 0;
+  line-height:20px;
+}
+
+.sidebar-item .material-icons-outlined {
+  flex:0 0 20px;
+  width:20px;
+  margin-right:12px;
+  padding-top:0;
+  font-size:18px;
+  line-height:20px;
+  text-align:center;
 }
 
 .active p {
