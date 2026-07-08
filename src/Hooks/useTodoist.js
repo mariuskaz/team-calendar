@@ -36,22 +36,60 @@ export default function useTodoist() {
     );
   };
 
-  const push = (content, due) => {
-    const task = {
+  const push = async (content, due) => {
+    const uuid = crypto.randomUUID();
+    const tempId = crypto.randomUUID();
+
+    const args = {
       content: content || "New task",
-      due_string: due || "",
       project_id: project,
-      assignee_id: user.id,
+      responsible_uid: user.id,
     };
 
-    fetch("https://api.todoist.com/rest/v2/tasks", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
+    if (due) {
+      args.due = { string: due };
+    }
+
+    const commands = [
+      {
+        type: "item_add",
+        temp_id: tempId,
+        uuid,
+        args,
       },
-      body: JSON.stringify(task),
-    }).then(() => sync());
+    ];
+
+    try {
+      const response = await fetch("https://api.todoist.com/api/v1/sync", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ commands }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data?.error || "Todoist Sync API request failed");
+      }
+
+      const status = data.sync_status?.[uuid];
+
+      if (status !== "ok") {
+        console.error("Todoist command failed:", status);
+        return;
+      }
+
+      if (data.sync_token) {
+        setSyncToken(data.sync_token);
+      }
+
+      sync();
+    } catch (err) {
+      console.error("Todoist push error:", err.message);
+    }
   };
 
   const checkout = (userId) => {
@@ -75,7 +113,7 @@ export default function useTodoist() {
         return;
       }
       console.log("syncing...")
-      const syncUrl = "https://api.todoist.com/sync/v9/sync";
+      const syncUrl = "https://api.todoist.com/api/v1/sync";
       const headers = {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
