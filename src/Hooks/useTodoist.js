@@ -36,101 +36,101 @@ export default function useTodoist() {
     );
   };
 
-const push = async (content, due) => {
-  const uuid = crypto.randomUUID();
-  const tempId = crypto.randomUUID();
+  const push = async (content, due) => {
+    const uuid = crypto.randomUUID();
+    const tempId = crypto.randomUUID();
 
-  const projectId =
-    project && project !== "undefined"
-      ? project
-      : user.inbox_project_id;
+    const projectId =
+      project && project !== "undefined"
+        ? project
+        : user.inbox_project_id;
 
-  if (!projectId) {
-    console.error("Cannot add task: no project selected");
-    return;
-  }
-
-  const args = {
-    content: content || "New task",
-    project_id: projectId,
-  };
-
-  if (user.id) {
-    args.responsible_uid = user.id;
-  }
-
-  if (due) {
-    args.due = { string: due };
-  }
-
-  const commands = [
-    {
-      type: "item_add",
-      temp_id: tempId,
-      uuid,
-      args,
-    },
-  ];
-
-  try {
-    const response = await fetch("https://api.todoist.com/api/v1/sync", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ commands }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data?.error || "Todoist Sync API request failed");
-    }
-
-    const status = data.sync_status?.[uuid];
-
-    if (status !== "ok") {
-      console.error("Todoist command failed:", status);
+    if (!projectId) {
+      console.error("Cannot add task: no project selected");
       return;
     }
 
-    const realId = data.temp_id_mapping?.[tempId] || tempId;
-
-    const fallbackTodo = {
-      id: realId,
-      v2_id: null,
-      checked: false,
-      content: args.content,
-      due: due
-        ? {
-            date: due,
-            string: due,
-          }
-        : null,
-      priority: 1,
-      responsibleId: args.responsible_uid || user.id,
-      project: {
-        id: args.project_id,
-        name: projects[args.project_id] || "Inbox",
-      },
+    const args = {
+      content: content || "New task",
+      project_id: projectId,
     };
 
-    setItems((prevItems) => {
-      const exists = prevItems.some((item) => item.id === realId);
+    if (user.id) {
+      args.responsible_uid = user.id;
+    }
 
-      if (exists) {
-        return prevItems;
+    if (due) {
+      args.due = { string: due };
+    }
+
+    const commands = [
+      {
+        type: "item_add",
+        temp_id: tempId,
+        uuid,
+        args,
+      },
+    ];
+
+    try {
+      const response = await fetch("https://api.todoist.com/api/v1/sync", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ commands }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data?.error || "Todoist Sync API request failed");
       }
 
-      return [...prevItems, fallbackTodo];
-    });
+      const status = data.sync_status?.[uuid];
 
-    setSynced(false);
-  } catch (err) {
-    console.error("Todoist push error:", err.message);
-  }
-};
+      if (status !== "ok") {
+        console.error("Todoist command failed:", status);
+        return;
+      }
+
+      const realId = data.temp_id_mapping?.[tempId] || tempId;
+
+      const fallbackTodo = {
+        id: realId,
+        v2_id: null,
+        checked: false,
+        content: args.content,
+        due: due
+          ? {
+              date: due,
+              string: due,
+            }
+          : null,
+        priority: 1,
+        responsibleId: args.responsible_uid || user.id,
+        project: {
+          id: args.project_id,
+          name: projects[args.project_id] || "Inbox",
+        },
+      };
+
+      setItems((prevItems) => {
+        const exists = prevItems.some((item) => item.id === realId);
+
+        if (exists) {
+          return prevItems;
+        }
+
+        return [...prevItems, fallbackTodo];
+      });
+
+      setSynced(false);
+    } catch (err) {
+      console.error("Todoist push error:", err.message);
+    }
+  };
 
   const checkout = (userId) => {
     setUsers((users) =>
@@ -152,12 +152,13 @@ const push = async (content, due) => {
         setSynced(true);
         return;
       }
-      console.log("syncing...")
+
       const syncUrl = "https://api.todoist.com/api/v1/sync";
       const headers = {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       };
+
       const params = {
         sync_token: syncToken,
         resource_types: ["user", "items", "projects", "collaborators"],

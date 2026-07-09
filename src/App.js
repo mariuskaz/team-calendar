@@ -20,10 +20,6 @@ export default function App() {
   const view = location.pathname
 
   useEffect(() => {
-    if (!todoist.synced) todoist.sync()
-  }, [todoist])
-
-  useEffect(() => {
     const today_section = document.getElementsByClassName('today-section')[0]
     listview.current.style.scrollBehavior = 'smooth'
     listview.current.scrollTop = today_section?.offsetTop - 160 || 0
