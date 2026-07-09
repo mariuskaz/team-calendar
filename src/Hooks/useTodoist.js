@@ -12,7 +12,7 @@ export default function useTodoist() {
   const [tasks, setTasks] = useState([]);
   const [user, setUser] = useState({});
   const [projects, setProjects] = useState({});
-  const [project, setProject] = useState(() => localStorage["project"]);
+  const [project, setProject] = useState(() => localStorage["project"] || "");
 
   const [searchParams] = useSearchParams();
   const userId = searchParams.get("uid") || users[0]?.id;
@@ -36,61 +36,101 @@ export default function useTodoist() {
     );
   };
 
-  const push = async (content, due) => {
-    const uuid = crypto.randomUUID();
-    const tempId = crypto.randomUUID();
+const push = async (content, due) => {
+  const uuid = crypto.randomUUID();
+  const tempId = crypto.randomUUID();
 
-    const args = {
-      content: content || "New task",
-      project_id: project,
-      responsible_uid: user.id,
+  const projectId =
+    project && project !== "undefined"
+      ? project
+      : user.inbox_project_id;
+
+  if (!projectId) {
+    console.error("Cannot add task: no project selected");
+    return;
+  }
+
+  const args = {
+    content: content || "New task",
+    project_id: projectId,
+  };
+
+  if (user.id) {
+    args.responsible_uid = user.id;
+  }
+
+  if (due) {
+    args.due = { string: due };
+  }
+
+  const commands = [
+    {
+      type: "item_add",
+      temp_id: tempId,
+      uuid,
+      args,
+    },
+  ];
+
+  try {
+    const response = await fetch("https://api.todoist.com/api/v1/sync", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ commands }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data?.error || "Todoist Sync API request failed");
+    }
+
+    const status = data.sync_status?.[uuid];
+
+    if (status !== "ok") {
+      console.error("Todoist command failed:", status);
+      return;
+    }
+
+    const realId = data.temp_id_mapping?.[tempId] || tempId;
+
+    const fallbackTodo = {
+      id: realId,
+      v2_id: null,
+      checked: false,
+      content: args.content,
+      due: due
+        ? {
+            date: due,
+            string: due,
+          }
+        : null,
+      priority: 1,
+      responsibleId: args.responsible_uid || user.id,
+      project: {
+        id: args.project_id,
+        name: projects[args.project_id] || "Inbox",
+      },
     };
 
-    if (due) {
-      args.due = { string: due };
-    }
+    setItems((prevItems) => {
+      const exists = prevItems.some((item) => item.id === realId);
 
-    const commands = [
-      {
-        type: "item_add",
-        temp_id: tempId,
-        uuid,
-        args,
-      },
-    ];
-
-    try {
-      const response = await fetch("https://api.todoist.com/api/v1/sync", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ commands }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data?.error || "Todoist Sync API request failed");
+      if (exists) {
+        return prevItems;
       }
 
-      const status = data.sync_status?.[uuid];
+      return [...prevItems, fallbackTodo];
+    });
 
-      if (status !== "ok") {
-        console.error("Todoist command failed:", status);
-        return;
-      }
-
-      if (data.sync_token) {
-        setSyncToken(data.sync_token);
-      }
-
-      sync();
-    } catch (err) {
-      console.error("Todoist push error:", err.message);
-    }
-  };
+    setSynced(false);
+  } catch (err) {
+    console.error("Todoist push error:", err.message);
+  }
+};
 
   const checkout = (userId) => {
     setUsers((users) =>
@@ -120,7 +160,7 @@ export default function useTodoist() {
       };
       const params = {
         sync_token: syncToken,
-        resource_types: ["user", "items", "projects", "collaborators", "notes"],
+        resource_types: ["user", "items", "projects", "collaborators"],
       };
 
       try {
@@ -161,14 +201,7 @@ export default function useTodoist() {
       setUsers(_users);
       setItems(todos);
       setSyncToken(data.sync_token);
-      
-      console.log('tasks...:', items.length)
-      data.notes.forEach((note) => {
-        if (isSameDay(note.posted_at, new Date()) && note.content.length > 0) {
-            console.log("%cComment " + new Date(note.posted_at).toLocaleString(), "font-weight: 900; color: black");
-            console.log(note.content);
-        }
-      });
+      setSynced(true);
     };
 
     const handleIncrementalSync = (data) => {
@@ -178,25 +211,9 @@ export default function useTodoist() {
       todos.forEach((todo) => updatedItems.set(todo.id, todo));
 
       setItems([...updatedItems.values()]);
+      if (data.sync_token) setSyncToken(data.sync_token);
       setSynced(true);
-
-      console.log('tasks:', items.length)
-      data.notes.forEach((note) => {
-        if (isSameDay(note.posted_at, new Date()) && note.content.length > 0) {
-          console.log("%cComment " + new Date(note.posted_at).toLocaleString(), "font-weight: 900; color: black");
-          console.log(note.content);
-        }
-      });
-
     };
-
-    const isSameDay = (date1, date2) => {
-      const d1 = new Date(date1);
-      const d2 = new Date(date2);
-      return d1.getFullYear() === d2.getFullYear() &&
-              d1.getMonth() === d2.getMonth() &&
-              d1.getDate() === d2.getDate();
-    }
 
     const formatTodos = (items, projects, user) => {
       return items
@@ -261,7 +278,7 @@ export default function useTodoist() {
   }, [users]);
 
   useEffect(() => {
-    localStorage.setItem("project", project);
+    if (project.length > 0) localStorage.setItem("project", project);
   }, [project]);
 
   return { url, synced, user, tasks, users, projects, project, sync, toggle, update, push, checkout, setup };
