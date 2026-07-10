@@ -1,286 +1,338 @@
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+
+const TODOIST_URL = "https://app.todoist.com";
+const TODOIST_SYNC_URL = "https://api.todoist.com/api/v1/sync";
+const RESOURCE_TYPES = ["user", "items", "projects", "collaborators"];
+
+function readJson(key, fallback) {
+  try {
+    return JSON.parse(localStorage[key] || JSON.stringify(fallback));
+  } catch {
+    return fallback;
+  }
+}
+
+function formatTodos(items = [], projects = {}, user = {}) {
+  return items
+    .map((task) => ({
+      id: task.id,
+      checked: task.priority === 2,
+      content: task.content,
+      due: task.due,
+      priority: task.priority,
+      responsibleId:
+        task.project_id === user.inbox_project_id ? user.id : task.responsible_uid,
+      project: {
+        id: task.project_id,
+        name: projects[task.project_id],
+      },
+    }))
+    .sort((a, b) => b.priority - a.priority);
+}
+
+function formatCollaborators(collaborators = [], user = {}, existingUsers = []) {
+  const checkedUserIds = new Set(
+    existingUsers.filter((existingUser) => existingUser.checked).map(({ id }) => id)
+  );
+
+  const otherUsers = collaborators
+    .filter((collaborator) => collaborator.id !== user.id)
+    .sort((a, b) => a.full_name.localeCompare(b.full_name))
+    .map((collaborator) => ({
+      id: collaborator.id,
+      name: collaborator.full_name,
+      mail: collaborator.email,
+      avatar:
+        collaborator.avatar_medium ||
+        `https://avatars.doist.com?fullName=${collaborator.full_name}&email=${collaborator.email}`,
+      checked: checkedUserIds.has(collaborator.id),
+    }));
+
+  return [
+    {
+      id: user.id,
+      name: user.full_name,
+      mail: user.email,
+      avatar: user.avatar_medium,
+      checked: true,
+    },
+    ...otherUsers,
+  ];
+}
+
+function sortByDueDate(a, b) {
+  if (!a.due?.date) return 1;
+  if (!b.due?.date) return -1;
+  return a.due.date > b.due.date ? 1 : -1;
+}
 
 export default function useTodoist() {
   const [synced, setSynced] = useState(false);
-  const [token] = useState(() => localStorage["token"]);
-  const [syncToken, setSyncToken] = useState("*");
+  const [token] = useState(() => localStorage["token"] || "");
+  const syncToken = useRef("*");
+  const latest = useRef({});
 
-  const [items, setItems] = useState(() => JSON.parse(localStorage["items"] || "[]"));
-  const [users, setUsers] = useState(() => JSON.parse(localStorage["users"] || "[]"));
-
-  const [tasks, setTasks] = useState([]);
+  const [items, setItems] = useState(() => readJson("items", []));
+  const [users, setUsers] = useState(() => readJson("users", []));
   const [user, setUser] = useState({});
   const [projects, setProjects] = useState({});
   const [project, setProject] = useState(() => localStorage["project"] || "");
+  const [syncRequest, setSyncRequest] = useState(0);
 
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+
   const userId = searchParams.get("uid") || users[0]?.id;
 
-  const navigate = useNavigate();
-  const url = "https://app.todoist.com";
+  useEffect(() => {
+    latest.current = { items, projects, user, users };
+  }, [items, projects, user, users]);
 
-  const sync = () => setSynced(false);
+  const tasks = useMemo(
+    () =>
+      items
+        .filter((item) => item.responsibleId === userId)
+        .sort(sortByDueDate),
+    [items, userId]
+  );
 
-  const toggle = (todoId) => {
+  const sync = useCallback(() => {
+    setSynced(false);
+    setSyncRequest((request) => request + 1);
+  }, []);
+
+  const toggle = useCallback((todoId) => {
     setItems((todos) =>
       todos.map((todo) =>
         todo.id === todoId ? { ...todo, checked: !todo.checked } : todo
       )
     );
-  };
+  }, []);
 
-  const update = (id, date) => {
+  const update = useCallback((id, date) => {
     setItems((todos) =>
       todos.map((todo) => (todo.id === id ? { ...todo, due: { date } } : todo))
     );
-  };
+  }, []);
 
-  const push = async (content, due) => {
-    const uuid = crypto.randomUUID();
-    const tempId = crypto.randomUUID();
+  const push = useCallback(
+    async (content, due) => {
+      const uuid = crypto.randomUUID();
+      const tempId = crypto.randomUUID();
 
-    const projectId =
-      project && project !== "undefined"
-        ? project
-        : user.inbox_project_id;
-
-    if (!projectId) {
-      console.error("Cannot add task: no project selected");
-      return;
-    }
-
-    const args = {
-      content: content || "New task",
-      project_id: projectId,
-    };
-
-    if (user.id) {
-      args.responsible_uid = user.id;
-    }
-
-    if (due) {
-      args.due = { string: due };
-    }
-
-    const commands = [
-      {
-        type: "item_add",
-        temp_id: tempId,
-        uuid,
-        args,
-      },
-    ];
-
-    try {
-      const response = await fetch("https://api.todoist.com/api/v1/sync", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ commands }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data?.error || "Todoist Sync API request failed");
-      }
-
-      const status = data.sync_status?.[uuid];
-
-      if (status !== "ok") {
-        console.error("Todoist command failed:", status);
-        return;
-      }
-
-      const realId = data.temp_id_mapping?.[tempId] || tempId;
-
-      const fallbackTodo = {
-        id: realId,
-        v2_id: null,
-        checked: false,
-        content: args.content,
-        due: due
-          ? {
-              date: due,
-              string: due,
-            }
-          : null,
-        priority: 1,
-        responsibleId: args.responsible_uid || user.id,
-        project: {
-          id: args.project_id,
-          name: projects[args.project_id] || "Inbox",
-        },
+      const args = {
+        content: content || "New task",
+        project_id: project || undefined,
+        responsible_uid: user.id || undefined,
       };
 
-      setItems((prevItems) => {
-        const exists = prevItems.some((item) => item.id === realId);
+      if (due) {
+        args.due = { string: due };
+      }
 
-        if (exists) {
-          return prevItems;
+      try {
+        const response = await fetch(TODOIST_SYNC_URL, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            commands: [
+              {
+                type: "item_add",
+                temp_id: tempId,
+                uuid,
+                args,
+              },
+            ],
+          }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data?.error || "Todoist Sync API request failed");
         }
 
-        return [...prevItems, fallbackTodo];
-      });
+        const status = data.sync_status?.[uuid];
 
-      setSynced(false);
-    } catch (err) {
-      console.error("Todoist push error:", err.message);
-    }
-  };
+        if (status !== "ok") {
+          console.error("Todoist command failed:", status);
+          return;
+        }
 
-  const checkout = (userId) => {
-    setUsers((users) =>
-      users.map((user) =>
-        user.id === userId ? { ...user, checked: !user.checked } : user
+        const realId = data.temp_id_mapping?.[tempId] || tempId;
+        const fallbackTodo = {
+          id: realId,
+          checked: false,
+          content: args.content,
+          due: due
+            ? {
+                date: due,
+                string: due,
+              }
+            : null,
+          priority: 1,
+          responsibleId: args.responsible_uid || user.id,
+          project: {
+            id: args.project_id,
+            name: projects[args.project_id] || "Inbox",
+          },
+        };
+
+        setItems((prevItems) =>
+          prevItems.some((item) => item.id === realId)
+            ? prevItems
+            : [...prevItems, fallbackTodo]
+        );
+        sync();
+      } catch (err) {
+        console.error("Todoist push error:", err.message);
+      }
+    },
+    [project, projects, sync, token, user]
+  );
+
+  const checkout = useCallback((userId) => {
+    setUsers((currentUsers) =>
+      currentUsers.map((currentUser) =>
+        currentUser.id === userId
+          ? { ...currentUser, checked: !currentUser.checked }
+          : currentUser
       )
     );
-  };
+  }, []);
 
-  const setup = (projectId) => setProject(projectId);
+  const setup = useCallback((projectId) => setProject(projectId), []);
 
-  useEffect(() => {
-    const controller = new AbortController();
-    const signal = controller.signal;
-
-    const fetchTodoist = async () => {
+  const fetchTodoist = useCallback(
+    async (signal) => {
       if (!token) {
         navigate("/connect");
         setSynced(true);
         return;
       }
 
-      const syncUrl = "https://api.todoist.com/api/v1/sync";
-      const headers = {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      };
-
-      const params = {
-        sync_token: syncToken,
-        resource_types: ["user", "items", "projects", "collaborators"],
-      };
+      const requestedSyncToken = syncToken.current;
 
       try {
-        const response = await fetch(syncUrl, {
+        const response = await fetch(TODOIST_SYNC_URL, {
           method: "POST",
-          headers,
-          body: JSON.stringify(params),
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            sync_token: requestedSyncToken,
+            resource_types: RESOURCE_TYPES,
+          }),
           signal,
         });
 
         const data = await response.json();
-        syncToken === "*" ? handleInitialSync(data) : handleIncrementalSync(data);
-  
 
+        if (!response.ok) {
+          throw new Error(data?.error || "Todoist Sync API request failed");
+        }
+
+        const current = latest.current;
+        const mergedProjects =
+          data.projects?.length > 0
+            ? {
+                ...current.projects,
+                ...Object.fromEntries(
+                  data.projects.map((todoistProject) => [
+                    todoistProject.id,
+                    todoistProject.name,
+                  ])
+                ),
+              }
+            : current.projects || {};
+
+        if (requestedSyncToken === "*") {
+          const initialUser = {
+            id: data.user.id,
+            name: data.user.full_name,
+            mail: data.user.email,
+            avatar: data.user.avatar_medium,
+            inbox_project_id: data.user.inbox_project_id,
+          };
+
+          setUser(initialUser);
+          setProjects(mergedProjects);
+          setUsers(formatCollaborators(data.collaborators, data.user, current.users));
+          setItems(formatTodos(data.items, mergedProjects, initialUser));
+        } else {
+          if (data.projects?.length > 0) {
+            setProjects(mergedProjects);
+          }
+
+          if (data.items?.length > 0) {
+            setItems((prevItems) => {
+              const updatedItems = new Map(prevItems.map((item) => [item.id, item]));
+
+              formatTodos(data.items, mergedProjects, current.user).forEach((todo) => {
+                updatedItems.set(todo.id, todo);
+              });
+
+              return [...updatedItems.values()];
+            });
+          }
+        }
+
+        if (data.sync_token) {
+          syncToken.current = data.sync_token;
+        }
+
+        setSynced(true);
       } catch (err) {
-        if (err.name !== "AbortError")
+        if (err.name !== "AbortError") {
           console.error("Connection error:", err.message);
+          setSynced(true);
+        }
       }
-    };
-
-    const handleInitialSync = (data) => {
-      setUser({
-        id: data.user.id,
-        name: data.user.full_name,
-        mail: data.user.email,
-        avatar: data.user.avatar_medium,
-        inbox_project_id: data.user.inbox_project_id,
-      });
-
-      const _projects = Object.fromEntries(
-        data.projects.map((project) => [project.id, project.name])
-      );
-      setProjects(_projects);
-
-      const todos = formatTodos(data.items, _projects, data.user);
-      const _users = formatCollaborators(data.collaborators, data.user, users);
-
-      setUsers(_users);
-      setItems(todos);
-      setSyncToken(data.sync_token);
-      setSynced(true);
-    };
-
-    const handleIncrementalSync = (data) => {
-      const todos = formatTodos(data.items, projects, user);
-
-      const updatedItems = new Map(items.map((item) => [item.id, item]));
-      todos.forEach((todo) => updatedItems.set(todo.id, todo));
-
-      setItems([...updatedItems.values()]);
-      if (data.sync_token) setSyncToken(data.sync_token);
-      setSynced(true);
-    };
-
-    const formatTodos = (items, projects, user) => {
-      return items
-        .map((task) => ({
-          id: task.id,
-          v2_id: task.v2_id,
-          checked: task.priority === 2,
-          content: task.content,
-          due: task.due,
-          priority: task.priority,
-          responsibleId: task.project_id === user.inbox_project_id ? user.id : task.responsible_uid,
-          project: {
-            id: task.project_id,
-            name: projects[task.project_id],
-          },
-        }))
-        .sort((a, b) => b.priority - a.priority);
-    };
-
-    const formatCollaborators = (collaborators, user, existingUsers) => {
-      const otherUsers = collaborators.filter((u) => u.id !== user.id);
-      
-      return [
-        {
-          id: user.id,
-          name: user.full_name,
-          mail: user.email,
-          avatar: user.avatar_medium,
-          checked: true,
-        },
-        ...otherUsers.sort((a, b) => a.full_name > b.full_name ? 1 : -1).map((collaborator) => ({
-          id: collaborator.id,
-          name: collaborator.full_name,
-          mail: collaborator.email,
-          avatar:
-            collaborator.avatar_medium ||
-            `https://avatars.doist.com?fullName=${collaborator.full_name}&email=${collaborator.email}`,
-          checked: existingUsers.some((u) => u.id === collaborator.id && u.checked),
-        })),
-      ]
-    };
-
-    if (!synced) fetchTodoist();
-
-    return () => controller.abort();
-  }, [synced, token, syncToken, items, projects, user, users, navigate]);
+    },
+    [navigate, token]
+  );
 
   useEffect(() => {
-    setTasks(
-      items
-        .filter((item) => item.responsibleId === userId)
-        .sort((a, b) => (a.due?.date > b.due?.date ? 1 : -1))
-    );
-  }, [userId, items]);
+    const controller = new AbortController();
+
+    fetchTodoist(controller.signal);
+
+    return () => controller.abort();
+  }, [fetchTodoist, syncRequest]);
 
   useEffect(() => {
     localStorage.setItem("items", JSON.stringify(items));
   }, [items]);
 
   useEffect(() => {
-    localStorage.setItem("users", JSON.stringify(users.filter((user) => user.checked)));
+    localStorage.setItem(
+      "users",
+      JSON.stringify(users.filter((currentUser) => currentUser.checked))
+    );
   }, [users]);
 
   useEffect(() => {
     if (project.length > 0) localStorage.setItem("project", project);
   }, [project]);
 
-  return { url, synced, user, tasks, users, projects, project, sync, toggle, update, push, checkout, setup };
+  return {
+    url: TODOIST_URL,
+    synced,
+    user,
+    tasks,
+    users,
+    projects,
+    project,
+    sync,
+    toggle,
+    update,
+    push,
+    checkout,
+    setup,
+  };
 }
